@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>Создание нового заказа</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <ul class="menu">
+                    <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item3-"><a href="/about">О нас</a></li>
+                    <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                    <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <form th:method="post" th:action="@{/orders}" th:object="${order}">
+                <input type="text" th:field="*{title}" id="title" placeholder="Наименнование проекта">
+                <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="validation-message">TITLE_ERROR</div>
+                <br/>
+                <label for="description">Enter description</label>
+                <textarea th:field="*{description}" id="description" cols="60" rows="10" placeholder="Опишите вашу идею"></textarea>
+                <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="validation-message">DESCRIPTION_ERROR</div>
+                <br/>
+                <input type="submit" value="Enter!"/>
+            </form>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>

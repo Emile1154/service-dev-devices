@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>order list</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <ul class="menu">
+                    <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item3-"><a href="/about">О нас</a></li>
+                    <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                    <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="admin-container">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/cookiesjs/1.4.2/cookies.min.js"></script>
+            <form id="ch" th:action="@{/admin/orders}" method="get">
+                <input type="text" th:value="${key}" placeholder="Search..." name="keyword">
+                <input id="ch1" type="checkbox" checked name="columns" value="id"><label>ID</label>
+                <input id="ch2" type="checkbox" name="columns" value="userId"><label>USER ID</label>
+                <input id="ch3" type="checkbox" name="columns" value="title"><label>TITLE</label>
+                <input id="ch4" type="checkbox" name="columns" value="isAccepted"><label>isAccepted</label>
+                <input id="ch5" type="checkbox" name="columns" value="isCompleted"><label>isCompleted</label>
+                <button onclick="location.replace('#toPrim'); location.reload();" type="submit">Go</button>
+            </form>
+            <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>USER ID</th>
+                    <th>TITLE</th>
+                    <th>isAccepted</th>
+                    <th>isCompleted</th>
+                    <th>ACTIONS</th>
+                </tr>
+                <div th:each="order : ${orders}">
+                    <tr>
+                        <td><a th:href="@{/orders/{id}(id=${order.getId()})}"
+                               th:text="${order.getId()}">ORDER_ID</a></td>
+                        <td><a th:href="@{/users/{id}(id=${order.getUser().getId()})}"
+                               th:text="${order.getUser().getId()}">USER_ID</a></td>
+                        <td><div th:text="${order.getTitle()}">TITLE</div></td>
+                        <td><div th:text="${order.isAccepted()}">isAccepted</div></td>
+                        <td><div th:text="${order.isCompleted()}">isCompleted</div></td>
+                        <td>
+                            <form th:method="DELETE" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
+                                <input type="submit"  value="Delete"/>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:method="post" th:action="@{/admin/orders/accept/{id}(id=${order.getId()})}">
+                                <input type="submit" value="Accept"/>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:method="post" th:action="@{/admin/orders/complete/{id}(id=${order.getId()})}">
+                                <input type="submit" value="Complete"/>
+                            </form>
+                        </td>
+
+                    </tr>
+                </div>
+            </table>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>
+

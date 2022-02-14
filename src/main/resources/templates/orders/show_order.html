@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>Title</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <ul class="menu">
+                    <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item3-"><a href="/about">О нас</a></li>
+                    <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                    <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container-order-information">
+            <div class="customer">
+                <a th:href="@{/users/{id}(id=${customer.getId()})}">CUSTOMER</a>
+            </div>
+            <div class="title">
+                <div th:text="${order.getTitle()}">TITLE_INFO</div>
+            </div>
+            <div class="description">
+                <div th:text="${order.getDescription()}">TITLE_INFO</div>
+            </div>
+            <div class="activity">
+                <div th:text="${order.isAccepted()}">TITLE_INFO</div>
+                <div th:text="${order.isCompleted()}">TITLE_INFO</div>
+            </div>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>All people</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <ul class="menu">
+                    <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item3-"><a href="/about">О нас</a></li>
+                    <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                    <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="admin-container">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/cookiesjs/1.4.2/cookies.min.js"></script>
+            <form id="ch" th:action="@{/admin/users}" method="get">
+                <input type="text" name="keyword" placeholder="Search..." th:value="${key}">
+                <input id="ch1" type="checkbox" name="columns" value="id"><label>ID</label>
+                <input id="ch2" type="checkbox" name="columns" value="nickname"><label>NAME</label>
+                <input id="ch3" type="checkbox" name="columns" value="phone"><label>PHONE</label>
+                <input id="ch4" type="checkbox" name="columns" value="email"><label>EMAIL</label>
+                <input id="ch5" type="checkbox" name="columns" value="accountNonLocked"><label>LOCKED</label>
+                <input id="ch6" type="checkbox" name="columns" value="active"><label>NONACTIVE</label>
+                <button onclick="location.replace('#toPrim'); location.reload();" type="submit">Go</button>
+            </form>
+            <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>ROLE</th>
+                    <th>PHONE</th>
+                    <th>EMAIL</th>
+                    <th>PASSWORD</th>
+                    <th>UNLOCKED</th>
+                    <th>ACTIVE</th>
+                    <th>ACTIONS</th>
+                </tr>
+                <div th:each="user : ${users}">
+                    <tr>
+                        <td><a th:href="@{/users/{id}(id=${user.getId()})}" th:text="${user.getId()}">ID</a></td>
+                        <td><div th:text="${user.getNickname}">NICKNAME</div></td>
+                        <td><div th:text="${user.getRoles().iterator().next().getRole()}">ROLE</div></td>
+                        <td><div th:text="${user.getPhone()}">PHONE</div></td>
+                        <td><div th:text="${user.getEmail()}">EMAIL</div></td>
+                        <td><div th:text="${user.getPassword()}">PASSWORD</div></td>
+                        <td><div th:text="${user.isAccountNonLocked()}">UNLOCKED</div></td>
+                        <td><div th:text="${user.isActive()}">ACTIVE</div></td>
+                        <td>
+                            <form th:method="DELETE" th:action="@{/admin/delete-users/{id}(id=${user.getId()})}">
+                                <input type="submit" value="Delete"/>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:method="post" th:action="@{/admin/users/lock/{id}(id=${user.getId()})}">
+                                <input type="submit" th:value="${user.isAccountNonLocked() == true}?'BAN':'UNBAN'"/>
+                            </form>
+                        </td>
+                    </tr>
+                </div>
+            </table>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>
+

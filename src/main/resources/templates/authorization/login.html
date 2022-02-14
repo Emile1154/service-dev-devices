@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>Вход</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <ul class="menu">
+                    <li id="menu_item1"><a href="/developing">Разработка</a></li>
+                    <li id="menu_item2"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item3"><a href="/about">О нас</a></li>
+                    <li id="menu_item4"><a href="/contacts">Контакты</a></li>
+                    <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <form th:action="@{/users/login}" th:method="post" class="login">
+                <input type="text" id="login" name="login" placeholder="Введите email / nickname">
+                <br/>
+                <input type="password" id="password" name="password" placeholder="Введите ваш пароль">
+                <br/>
+                <div th:text="${error}">SOME_ERROR</div>
+                <div th:text="${msg}">SOME_MSG</div>
+                <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+                <input type="submit" value="Enter!"/>
+            </form>
+            <form th:method="GET" th:action="@{/users/registration}" >
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                <input type="submit" value="Регистрация"/>
+            </form>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+
+</body>
+</html>

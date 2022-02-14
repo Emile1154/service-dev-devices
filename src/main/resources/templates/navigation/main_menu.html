@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>Разработка и изготовление устройств</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <div sec:authorize="isAnonymous()">
+                    <ul class="menu">
+                        <li id="menu_item1"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2"><a href="/collection">Портфолио</a></li>
+                        <li id="menu_item3"><a href="/about">О нас</a></li>
+                        <li id="menu_item4"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
+                    </ul>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <ul class="menu">
+                        <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                        <li id="menu_item3-"><a href="/about">О нас</a></li>
+                        <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="content-item1">
+                <div class="item-title1">
+                    <h4>Разработка устройств и программного обеспечения на заказ</h4>
+                </div>
+                <img class="icon1" th:src="@{/images/photo_1.jpg}" width="50">
+                <div class="item-text1">
+                    <p id="txt1">
+                        Наша команда готова направить все силы на то чтобы реализовать вашу идею.
+                        Разработка универсальна, и может работать в различных направлениях.
+                        <br>
+                        <span id="italic-txt">
+                            Вы даете нам идею - мы её воплощаем!
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="content-item2">
+                <div class="item-title2">
+                    <h3>Наши услуги:</h3>
+                </div>
+                <div class="item-text1">
+                    <h4>Разработка электроники на микропроцессоре/микроконтроллере</h4>
+                </div>
+                <div class="item-text2">
+                    <h4>Написание программного обеспечения.</h4>
+                </div>
+                <div class="item-text3">
+                    <h4>Комплексная разработка (Разработка электроники, программного обеспечения, дизайн)</h4>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="footer">
+
+        </div>
+    </div>
+
+<!--    <form th:method="GET" th:action="@{/login}" >-->
+<!--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+<!--        <input type="submit" value="Login"/>-->
+<!--    </form>-->
+
+</body>
+</html>
+

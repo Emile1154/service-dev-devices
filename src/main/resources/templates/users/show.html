@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title th:text="${user.getNickname()}">TITLE_TXT</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <div sec:authorize="isAnonymous()">
+                    <ul class="menu">
+                        <li id="menu_item1"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2"><a href="/collection">Портфолио</a></li>
+                        <li id="menu_item3"><a href="/about">О нас</a></li>
+                        <li id="menu_item4"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
+                    </ul>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <ul class="menu">
+                        <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                        <li id="menu_item3-"><a href="/about">О нас</a></li>
+                        <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="about-user">
+                <div class="avatar">
+
+                </div>
+                <div id="user-nickname">
+                    <div th:text="${user.getNickname()}">USER_NICKNAME</div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <div th:if="${user.getId()} == ${currentUser.getId()} OR ${roles.iterator().next().getId()}==2">
+                        <div class="info">
+                            <div id="user-email">
+                                <div th:text="${user.getEmail()}">USER_EMAIL</div>
+                            </div>
+                            <div id="user-phone">
+                                <div th:text="${user.getPhone()}">USER_PHONE</div>
+                            </div>
+                        </div>
+                        <div class="user-action" th:if="${user.getId()} == ${currentUser.getId()}">
+                            <div sec:authorize="hasRole('USER')">
+                                <div id="btn-create-order">
+                                    <form method="get" th:action="@{/orders/new}" >
+                                        <input type="submit" value="Создать заказ"/>
+                                    </form>
+                                </div>
+                                <div id="btn-show-order">
+                                    <form th:action="@{/users/orders}" method="get">
+                                        <input type="submit" value="Мои заказы"/>
+                                    </form>
+                                </div>
+                            </div>
+                            <div sec:authorize="hasRole('ADMIN')">
+                                <form th:action="@{/admin}" method="get">
+                                    <input type="submit" value="Админка"/>
+                                </form>
+                            </div>
+                            <div id="btn-logout">
+                                <form th:action="@{/logout}" method="get">
+                                    <input type="submit" value="Выйти"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</body>
+</html>
