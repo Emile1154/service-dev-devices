@@ -31,11 +31,18 @@
         </div>
         <div class="content">
             <div class="about-user">
-                <div class="avatar">
-
-                </div>
                 <div id="user-nickname">
                     <div th:text="${user.getNickname()}">USER_NICKNAME</div>
+                </div>
+                <div class="avatar">
+                    <img th:src=@{'data:image/png;base64,'+${user.getImage().getIcon64()}} width="90px">
+                    <div sec:authorize="isAuthenticated()" th:if="${user.getId()} == ${currentUser.getId()}">
+                        <form th:action="@{/add-image}" th:method="post" enctype="multipart/form-data">
+                            <input type="file" name="image" accept="image/png, image/jpeg, image/gif" id="">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="submit" value="Загрузить">
+                        </form>
+                    </div>
                 </div>
                 <div sec:authorize="isAuthenticated()">
                     <div th:if="${user.getId()} == ${currentUser.getId()} OR ${roles.iterator().next().getId()}==2">
@@ -66,7 +73,8 @@
                                 </form>
                             </div>
                             <div id="btn-logout">
-                                <form th:action="@{/logout}" method="get">
+                                <form th:action="@{/logout}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <input type="submit" value="Выйти"/>
                                 </form>
                             </div>

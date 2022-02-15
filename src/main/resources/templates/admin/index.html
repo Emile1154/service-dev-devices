@@ -34,6 +34,7 @@
             <table>
                 <tr>
                     <th>ID</th>
+                    <th>ICON</th>
                     <th>NAME</th>
                     <th>ROLE</th>
                     <th>PHONE</th>
@@ -46,6 +47,7 @@
                 <div th:each="user : ${users}">
                     <tr>
                         <td><a th:href="@{/users/{id}(id=${user.getId()})}" th:text="${user.getId()}">ID</a></td>
+                        <td><img th:src=@{'data:image/png;base64,'+${user.getImage().getIcon64()}} width="20px"></td>
                         <td><div th:text="${user.getNickname}">NICKNAME</div></td>
                         <td><div th:text="${user.getRoles().iterator().next().getRole()}">ROLE</div></td>
                         <td><div th:text="${user.getPhone()}">PHONE</div></td>
@@ -55,11 +57,13 @@
                         <td><div th:text="${user.isActive()}">ACTIVE</div></td>
                         <td>
                             <form th:method="DELETE" th:action="@{/admin/delete-users/{id}(id=${user.getId()})}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <input type="submit" value="Delete"/>
                             </form>
                         </td>
                         <td>
                             <form th:method="post" th:action="@{/admin/users/lock/{id}(id=${user.getId()})}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <input type="submit" th:value="${user.isAccountNonLocked() == true}?'BAN':'UNBAN'"/>
                             </form>
                         </td>

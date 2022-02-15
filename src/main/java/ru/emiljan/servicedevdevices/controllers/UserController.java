@@ -26,7 +26,8 @@ public class UserController {
     private final OrderService orderService;
 
     @Autowired
-    public UserController(UserService userService, OrderService orderService) {
+    public UserController(UserService userService,
+                          OrderService orderService) {
         this.userService = userService;
         this.orderService = orderService;
     }
@@ -34,11 +35,12 @@ public class UserController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
-        model.addAttribute("user", userService.findById(id));
+        User user = userService.findById(id);
+        model.addAttribute("user", user);
         if(currentUser != null){
-            User user = userService.findUserByNickname(currentUser.getUsername());
-            model.addAttribute("currentUser", user);
-            model.addAttribute("roles", user.getRoles());
+            User authUser = userService.findUserByNickname(currentUser.getUsername());
+            model.addAttribute("currentUser", authUser);
+            model.addAttribute("roles", authUser.getRoles());
         }
         return "users/show";
     }
@@ -115,7 +117,7 @@ public class UserController {
         return null;
     }
 
-    private String getErrorMessage(HttpServletRequest request){
+    public String getErrorMessage(HttpServletRequest request){
 
         Exception exception = (Exception) request.getSession()
                 .getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
@@ -129,6 +131,4 @@ public class UserController {
         }
         return error;
     }
-
-
 }

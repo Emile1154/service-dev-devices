@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.Image;
 import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 import ru.emiljan.servicedevdevices.specifications.UserSpecifications;
@@ -25,16 +27,19 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailSenderService mailSender;
+    private final ImageRepository imageRepository;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       MailSenderService mailSender) {
+                       MailSenderService mailSender,
+                       ImageRepository imageRepo) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSender = mailSender;
+        this.imageRepository = imageRepo;
     }
 
     public User findUserByEmail(String email) {
@@ -85,6 +90,7 @@ public class UserService {
         return errors;
     }
 
+    @Transactional
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.
                 encode(user.getPassword()));
@@ -93,6 +99,9 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setActive(false);
         user.setActivateCode(UUID.randomUUID().toString());
+        Image defaultIcon = imageRepository.getById(1);
+
+        user.setImage(defaultIcon);
 
         String message = String.format("Привет, %s! \n" +
                 "Если Вы получили данное письмо, то значит регистрация аккаунта на сервисе прошла успешно," +
@@ -102,6 +111,7 @@ public class UserService {
 
         mailSender.send(user.getEmail(), "Активация аккаунта", message);
         userRepository.save(user);
+        imageRepository.save(defaultIcon);
     }
 
 
@@ -118,6 +128,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public void deleteById(int id){
         userRepository.deleteById(id);
     }

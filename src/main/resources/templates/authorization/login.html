@@ -26,11 +26,10 @@
                 <br/>
                 <div th:text="${error}">SOME_ERROR</div>
                 <div th:text="${msg}">SOME_MSG</div>
-                <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="submit" value="Enter!"/>
             </form>
             <form th:method="GET" th:action="@{/users/registration}" >
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <input type="submit" value="Регистрация"/>
             </form>
         </div>

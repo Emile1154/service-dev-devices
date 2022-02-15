@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.emiljan.servicedevdevices.models.Order;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.services.ImageService;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
@@ -22,7 +23,8 @@ public class AdminController {
     private final OrderService orderService;
 
     @Autowired
-    public AdminController(UserService userService, OrderService orderService) {
+    public AdminController(UserService userService,
+                           OrderService orderService) {
         this.userService = userService;
         this.orderService = orderService;
     }

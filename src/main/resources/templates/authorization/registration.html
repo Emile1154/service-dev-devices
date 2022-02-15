@@ -36,7 +36,7 @@
                 <input type="text" value="+7 " th:field="*{phone}" id="phone">
                 <div style="color:red" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="validation-message">phone_error</div>
                 <br/>
-                <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="submit" value="Enter!"/>
             </form>
         </div>
