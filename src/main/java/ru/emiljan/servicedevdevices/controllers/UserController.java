@@ -15,6 +15,7 @@ import ru.emiljan.servicedevdevices.services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author EM1LJAN
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model,
+    public String show(@PathVariable("id") Long id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
         User user = userService.findById(id);
         model.addAttribute("user", user);
@@ -70,11 +71,10 @@ public class UserController {
     @PostMapping
     public String create(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult, Model model){
-        List<String> errors = userService.checkRepeats(user);
+        Map<String,String> errors = userService.checkRepeats(user);
         if(!errors.isEmpty()){
-            for (int i = 0; i <= errors.size()/2 + 1; i+=2) {
-                bindingResult.rejectValue(errors.get(i), "error.user",
-                        errors.get(i+1));
+            for(Map.Entry<String,String> pair : errors.entrySet() ){
+                bindingResult.rejectValue(pair.getKey(),"error.user", pair.getValue());
             }
         }
         if(bindingResult.hasErrors()){
@@ -117,7 +117,7 @@ public class UserController {
         return null;
     }
 
-    public String getErrorMessage(HttpServletRequest request){
+    private String getErrorMessage(HttpServletRequest request){
 
         Exception exception = (Exception) request.getSession()
                 .getAttribute("SPRING_SECURITY_LAST_EXCEPTION");

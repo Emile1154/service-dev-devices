@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.emiljan.servicedevdevices.models.Order;
+import ru.emiljan.servicedevdevices.models.Status;
 
 import java.util.List;
 
@@ -14,17 +15,8 @@ import java.util.List;
  * @author EM1LJAN
  */
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Integer> ,
+public interface OrderRepository extends JpaRepository<Order, Long> ,
                                          JpaSpecificationExecutor<Order> {
-    List<Order> findOrderByUserId(int id);
+    List<Order> findOrderByUserId(Long id);
     Order findOrderByTitle(String title);
-    Order findOrderByDescription(String description);
-
-    @Modifying
-    @Query(value = "UPDATE orders SET is_accepted= :accept, is_completed = :complete WHERE id = :id",
-            nativeQuery = true)
-    void setOrderInfoById(@Param("accept") boolean accept,
-                          @Param("complete") boolean complete,
-                          @Param("id") int id);
-
 }

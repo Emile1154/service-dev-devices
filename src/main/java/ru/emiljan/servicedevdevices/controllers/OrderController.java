@@ -14,7 +14,6 @@ import ru.emiljan.servicedevdevices.services.UserService;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 /**
  * @author EM1LJAN
@@ -32,7 +31,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model,
+    public String show(@PathVariable("id") Long id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
 
         User user = userService.findUserByNickname(currentUser.getUsername());
@@ -63,12 +62,9 @@ public class OrderController {
                               BindingResult bindingResult){
         User customer = userService.findUserByNickname(user.getName());
         model.addAttribute("user", customer);
-        List<String> errors = orderService.checkRepeats(order);
-        if(!errors.isEmpty()){
-            for (int i = 0; i < errors.size()/2+1; i+=2) {
-                bindingResult.rejectValue(errors.get(i), "error.user",
-                        errors.get(i+1));
-            }
+        if(orderService.checkTitle(order)){
+                bindingResult.rejectValue("title", "error.user",
+                        "Данное наименнование проекта уже использовалось");
         }
         if(bindingResult.hasErrors()){
             return "orders/create_order";

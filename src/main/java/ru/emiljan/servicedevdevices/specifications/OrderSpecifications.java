@@ -20,13 +20,4 @@ public class OrderSpecifications {
                         .toArray(Predicate[]::new)
         );
     }
-    public static Specification<Order> findTrueBool(List<String> columns){
-        return (root, query, builder)
-                -> builder.and(
-                root.getModel().getDeclaredSingularAttributes().stream()
-                        .filter(column -> columns.contains(column.getName()))
-                        .map(column -> builder.equal(root.get(column.getName()), true))
-                        .toArray(Predicate[]::new)
-        );
-    }
 }
