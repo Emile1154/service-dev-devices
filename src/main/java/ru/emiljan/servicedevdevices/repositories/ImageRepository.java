@@ -8,5 +8,5 @@ import ru.emiljan.servicedevdevices.models.Image;
  * @author EM1LJAN
  */
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface ImageRepository extends JpaRepository<Image, Integer> {
 }

@@ -2,13 +2,9 @@ package ru.emiljan.servicedevdevices.models;
 
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * @author EM1LJAN
@@ -24,7 +20,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private Long id;
+    private int id;
 
     @Column(name = "title", unique = true)
     @NotEmpty(message = "*Please provide task")
@@ -34,20 +30,11 @@ public class Order {
     @NotEmpty(message = "*Please provide description")
     private String description;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Column(name="is_accepted")
+    private boolean isAccepted = false;
 
-    @CreationTimestamp
-    @Column(name = "created")
-    private LocalDateTime created;
-
-    @UpdateTimestamp
-    @Column(name = "updated")
-    private LocalDateTime updated;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name="order_status")
-    private Status orderStatus;
+    @Column(name="is_completed")
+    private boolean isCompleted = false;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")

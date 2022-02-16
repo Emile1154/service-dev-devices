@@ -12,7 +12,10 @@ import ru.emiljan.servicedevdevices.repositories.RoleRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 import ru.emiljan.servicedevdevices.specifications.UserSpecifications;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +51,7 @@ public class UserService {
     }
 
 
-    private String formatPhone(String phoneNumber){
+    public String formatPhone(String phoneNumber){
         phoneNumber = phoneNumber.
                 replaceAll("\\D", "");
         String AAA, BBB, CC, DD;
@@ -68,17 +71,21 @@ public class UserService {
         return "+7"+"("+ AAA +")" + BBB + "-" + CC + "-" + DD;
     }
 
-    public Map<String, String> checkRepeats(User user){
-        Map<String,String> errors = new HashMap<>();
+    public List<String> checkRepeats(User user){
+        List<String> errors = new ArrayList<>();
         user.setPhone(formatPhone(user.getPhone()));
         if(userRepository.findByPhone(user.getPhone())!=null){
-            errors.put("phone","Данный номер телефона уже занят :(");
+            errors.add("phone"); //field
+            errors.add("Данный номер телефона уже занят :(");//msg
         }
+
         if(userRepository.findByNickname(user.getNickname())!=null){
-            errors.put("nickname", "Это имя уже занято :(");
+            errors.add("nickname");//field
+            errors.add("Это имя уже занято :(");//msg
         }
         if(userRepository.findByEmail(user.getEmail())!=null){
-            errors.put("email", "Данный почтовый адрес уже занят :(");//field
+            errors.add("email");//field
+            errors.add("Данный почтовый адрес уже занят :(");//msg
         }
         return errors;
     }
@@ -92,7 +99,7 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setActive(false);
         user.setActivateCode(UUID.randomUUID().toString());
-        Image defaultIcon = imageRepository.getById(1L);
+        Image defaultIcon = imageRepository.getById(1);
 
         user.setImage(defaultIcon);
 
@@ -122,16 +129,16 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteById(Long id){
+    public void deleteById(int id){
         userRepository.deleteById(id);
     }
 
-    public User findById(Long id){
+    public User findById(int id){
         return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
-    public void BanUserById(Long id, boolean param){
+    public void BanUserById(int id, boolean param){
         userRepository.setLockById(id, param);
     }
 
@@ -139,7 +146,7 @@ public class UserService {
     public boolean activateUser(String code) {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){
-            userRepository.setActiveById(user.getId());
+            userRepository.setActiveById(user.getId(), true);
             return true;
         }
         return false;

@@ -8,6 +8,6 @@ import ru.emiljan.servicedevdevices.models.Role;
  * @author EM1LJAN
  */
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
     Role findByRole(String role);
 }

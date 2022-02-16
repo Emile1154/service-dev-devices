@@ -3,6 +3,7 @@ package ru.emiljan.servicedevdevices.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author EM1LJAN
@@ -17,7 +18,7 @@ import javax.persistence.*;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "icon64")
     private String icon64;
