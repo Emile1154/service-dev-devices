@@ -61,7 +61,10 @@ public class User {
     private Set<Role> roles;
 
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orders;
+    private List<CustomOrder> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Payment> payments;
 
     @OneToOne
     @JoinColumn(name = "image_id")

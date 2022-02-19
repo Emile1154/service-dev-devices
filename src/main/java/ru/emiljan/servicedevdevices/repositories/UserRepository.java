@@ -17,16 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long>,
     User findByEmail(String email);
     User findByNickname(String nickname);
     User findByPhone(String phoneNumber);
+    User findUserByActivateCode(String code);
 
     @Modifying
     @Query(value = "UPDATE users SET account_non_locked = :lock WHERE id = :id",
             nativeQuery = true)
     void setLockById(@Param("id") Long id, @Param("lock") boolean lock);
-
-    @Modifying
-    @Query(value = "UPDATE users SET active = true, activation_code = null WHERE id = :id",
-        nativeQuery = true)
-    void setActiveById(@Param("id") Long id);
-
-    User findUserByActivateCode(String code);
 }

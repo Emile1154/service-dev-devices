@@ -14,7 +14,6 @@ import ru.emiljan.servicedevdevices.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -22,10 +22,10 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/cookiesjs/1.4.2/cookies.min.js"></script>
             <form id="ch" th:action="@{/admin/orders}" method="get">
                 <input type="text" th:value="${key}" placeholder="Search..." name="keyword">
-                <input id="ch1" type="checkbox" checked name="columns" value="id"><label>ID</label>
-                <input id="ch2" type="checkbox" name="columns" value="userId"><label>USER ID</label>
-                <input id="ch3" type="checkbox" name="columns" value="title"><label>TITLE</label>
-                <input id="ch4" type="checkbox" name="columns" value="orderStatus"><label>STATUS</label>
+                <input id="ch1" type="checkbox" checked name="columns" value="id"><label for="ch1">ID</label>
+                <input id="ch2" type="checkbox" name="columns" value="userId"><label for="ch2">USER ID</label>
+                <input id="ch3" type="checkbox" name="columns" value="title"><label for="ch3">TITLE</label>
+                <input id="ch4" type="checkbox" name="columns" value="orderStatus"><label for="ch4">STATUS</label>
                 <button onclick="location.replace('#toPrim'); location.reload();" type="submit">Go</button>
             </form>
             <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
@@ -52,14 +52,20 @@
                         <td><div th:text="${order.getCreated()}">CREATED</div></td>
                         <td><div th:text="${order.getUpdated()}">UPDATED</div></td>
                         <td>
-                            <form id="ch" th:method="post" th:action="@{/admin/orders/set-status/{id}(id=${order.getId()})}">
-                                <input type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('NEW')}" value="NEW"><label>NEW</label>
-                                <input type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('ACCEPTED')}" value="ACCEPTED"><label>ACCEPTED</label>
-                                <input type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CANCELED')}" value="CANCELED"><label>CANCELED</label>
-                                <input type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('PAYED')}" value="PAYED"><label>PAYED</label>
-                                <input type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CLOSED')}" value="CLOSED"><label>CLOSED</label>
+                            <form th:method="post" th:action="@{/admin/orders/update/{id}(id=${order.getId()})}">
+                                <input id="status-new" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('NEW')}" value="NEW"><label for="status-new">NEW</label>
+                                <input id="status-accept" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('ACCEPTED')}" value="ACCEPTED"><label for="status-accept">ACCEPTED</label>
+                                <input id="status-cancel" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CANCELED')}" value="CANCELED"><label for="status-cancel">CANCELED</label>
+                                <input id="status-pay" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('PAYED')}" value="PAYED"><label for="status-pay">PAYED</label>
+                                <input id="status-close" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CLOSED')}" value="CLOSED"><label for="status-close">CLOSED</label>
+                                <input type="number" name="price" placeholder="Цена" step="any" th:value="${order.getPrice()}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <button type="submit">SET</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/set-price/{id}(id=${order.getId()})}" th:method="post">
+
                             </form>
                         </td>
                         <td>

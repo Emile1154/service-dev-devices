@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
-public class Order {
+public class CustomOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -30,7 +30,7 @@ public class Order {
     @NotEmpty(message = "*Please provide task")
     private String title;
 
-    @Column(name = "description", unique = true)
+    @Column(name = "description")
     @NotEmpty(message = "*Please provide description")
     private String description;
 

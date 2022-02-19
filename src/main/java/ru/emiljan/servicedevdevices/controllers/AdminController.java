@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.Order;
+import ru.emiljan.servicedevdevices.models.CustomOrder;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -53,12 +54,15 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @PostMapping("/orders/set-status/{id}")
-    public String setOrderStatus(@PathVariable("id") Long id, String input){
-        Order order = orderService.findById(id);
-        if (order != null) {
-            orderService.update(order, Status.valueOf(input));
+    @PostMapping("/orders/update/{id}")
+    public String setOrderStatus(@PathVariable("id") Long id, String input,
+                                 BigDecimal price, Model model){
+        CustomOrder order = orderService.findById(id);
+        if(price.equals(BigDecimal.ZERO) || price.equals(order.getPrice())){
+            orderService.update(order,Status.valueOf(input));
+            return "redirect:/admin/orders";
         }
+        orderService.update(order,price);
         return "redirect:/admin/orders";
     }
 

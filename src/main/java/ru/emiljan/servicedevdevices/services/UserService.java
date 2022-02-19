@@ -49,6 +49,9 @@ public class UserService {
 
 
     private String formatPhone(String phoneNumber){
+        if(phoneNumber.isEmpty()){
+            return null;
+        }
         phoneNumber = phoneNumber.
                 replaceAll("\\D", "");
         String AAA, BBB, CC, DD;
@@ -139,7 +142,8 @@ public class UserService {
     public boolean activateUser(String code) {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){
-            userRepository.setActiveById(user.getId());
+            user.setActive(true);
+            userRepository.save(user);
             return true;
         }
         return false;

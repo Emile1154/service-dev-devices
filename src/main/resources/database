@@ -46,12 +46,26 @@ CREATE TABLE orders(
     title VARCHAR(255) NOT NULL UNIQUE ,
     description TEXT(1000) NOT NULL,
     order_status VARCHAR(20) NOT NULL,
-    price DECIMAL,
+    price DECIMAL(5,2),
     created TIMESTAMP,
     updated TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 )
 ENGINE =InnoDB;
+
+CREATE TABLE payments(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(255),
+    created TIMESTAMP,
+    updated TIMESTAMP,
+    pay_status VARCHAR(20),
+    pay_method VARCHAR(20),
+    user_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+)
+ENGINE = InnoDB;
 
 -- insert data
 INSERT INTO users VALUES (null,'admin', 'laim778@yandex.ru', '+7(996)404-45-13',

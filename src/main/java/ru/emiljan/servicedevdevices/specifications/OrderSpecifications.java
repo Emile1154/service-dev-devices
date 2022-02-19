@@ -1,6 +1,6 @@
 package ru.emiljan.servicedevdevices.specifications;
 import org.springframework.data.jpa.domain.Specification;
-import ru.emiljan.servicedevdevices.models.Order;
+import ru.emiljan.servicedevdevices.models.CustomOrder;
 
 import javax.persistence.criteria.Predicate;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * @author EM1LJAN
  */
 public class OrderSpecifications {
-    public static Specification<Order> findByKeyword(String keyword, List<String> columns){
+    public static Specification<CustomOrder> findByKeyword(String keyword, List<String> columns){
         String finalKeyword = "%"+ keyword +"%";
         return (root, query, builder)
                 -> builder.and(

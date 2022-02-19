@@ -3,11 +3,12 @@ package ru.emiljan.servicedevdevices.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.emiljan.servicedevdevices.models.Order;
+import ru.emiljan.servicedevdevices.models.CustomOrder;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.repositories.OrderRepository;
 import ru.emiljan.servicedevdevices.specifications.OrderSpecifications;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,11 +23,11 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public Order findById(Long id){
+    public CustomOrder findById(Long id){
         return orderRepository.findById(id).orElse(null);
     }
 
-    public List<Order> findAllOrders(){
+    public List<CustomOrder> findAllOrders(){
         return orderRepository.findAll();
     }
 
@@ -35,11 +36,11 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
-    public List<Order> findOrdersByKeyword(List<String> columns, String keyword){
+    public List<CustomOrder> findOrdersByKeyword(List<String> columns, String keyword){
         return orderRepository.findAll(OrderSpecifications.findByKeyword(keyword, columns));
     }
 
-    public boolean checkTitle(Order order){
+    public boolean checkTitle(CustomOrder order){
         if(orderRepository.findOrderByTitle(order.getTitle()) == null){
             return false;
         }
@@ -47,18 +48,31 @@ public class OrderService {
     }
 
     @Transactional
-    public void saveOrder(Order order){
+    public void saveOrder(CustomOrder order){
         order.setOrderStatus(Status.NEW);
         orderRepository.save(order);
     }
 
-    public List<Order> findOrdersByUserId(Long id){
+    public List<CustomOrder> findOrdersByUserId(Long id){
         return orderRepository.findOrderByUserId(id);
     }
 
     @Transactional
-    public void update(Order order, Status status){
+    public void update(CustomOrder order, Status status){
+        if(order==null){
+            return;
+        }
         order.setOrderStatus(status);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void update(CustomOrder order, BigDecimal price) {
+        if(order==null){
+            return;
+        }
+        order.setOrderStatus(Status.ACCEPTED);
+        order.setPrice(price);
         orderRepository.save(order);
     }
 }

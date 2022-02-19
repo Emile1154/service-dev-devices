@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_db
     username: admin
-    password: 250802wasd
+    password: password
     tomcat:
       validation-query: SELECT 1
       test-while-idle: true
@@ -19,9 +19,14 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: laim778@yandex.ru
-    password: bvemnrerwyxdleix
+    username: yandex@yandex.ru
+    password: password
     protocol: smtps
   sql:
     init:
       mode: always
+
+paypal:
+  clientId: some client id
+  clientSecret: some client secret
+

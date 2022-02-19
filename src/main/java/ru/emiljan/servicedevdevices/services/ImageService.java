@@ -19,11 +19,13 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private static final int DEFAULT_IMAGE = 1;
+
     public ImageService(ImageRepository imageRepository,
                         UserRepository userRepository) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
     }
+
 
     @Transactional
     public void load(MultipartFile image, User user){
