@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.78/Build/Cesium/Cesium.js"></script>
     <title>Title</title>
 </head>
 <body>
@@ -28,14 +30,25 @@
             <div class="description">
                 <div th:text="${order.getDescription()}">TITLE_INFO</div>
             </div>
-            <div class="activity">
-                <div th:text="${order.isAccepted()}">TITLE_INFO</div>
-                <div th:text="${order.isCompleted()}">TITLE_INFO</div>
-            </div>
         </div>
-        <div class="footer">
-
+        <div th:if="${order.getOrderStatus().name().equals('ACCEPTED')}">
+            <div th:text="'К оплате ' + ${order.getPrice()}"></div>
+            <form th:action="@{/payment/pay/current-order/{id}(id=${order.getId()})}" th:method="post">
+                <button type="submit">Purchase with PayPal</button>
+            </form>
+            <form th:action="@{/api/v1/vk-pay/{id}(id=${order.getId()})}" th:method="post">
+                <button id="payment" type="submit">Purchase with VK</button>
+            </form>
+            <script type="text/javascript" th:src="@{/js/vk-pay-script.js}"></script>
         </div>
     </div>
+    <div class="footer">
+
+    </div>
+    <script type="text/javascript">
+        VK.init({
+            apiId: 8084738
+        });
+    </script>
 </body>
 </html>

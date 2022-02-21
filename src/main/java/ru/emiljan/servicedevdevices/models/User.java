@@ -2,6 +2,7 @@ package ru.emiljan.servicedevdevices.models;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import ru.emiljan.servicedevdevices.models.payment.Payment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -24,7 +25,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "nickname", unique = true)
     @Length(min = 5, max = 12,
@@ -61,6 +62,13 @@ public class User {
     private Set<Role> roles;
 
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orders;
+    private List<CustomOrder> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Payment> payments;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
 }

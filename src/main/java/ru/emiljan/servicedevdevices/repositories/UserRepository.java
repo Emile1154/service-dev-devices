@@ -12,21 +12,15 @@ import ru.emiljan.servicedevdevices.models.User;
  * @author EM1LJAN
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer>,
+public interface UserRepository extends JpaRepository<User, Long>,
                                         JpaSpecificationExecutor<User> {
     User findByEmail(String email);
     User findByNickname(String nickname);
     User findByPhone(String phoneNumber);
+    User findUserByActivateCode(String code);
 
     @Modifying
     @Query(value = "UPDATE users SET account_non_locked = :lock WHERE id = :id",
             nativeQuery = true)
-    void setLockById(@Param("id") int id, @Param("lock") boolean lock);
-
-    @Modifying
-    @Query(value = "UPDATE users SET active = :value, activation_code = null WHERE id = :id",
-        nativeQuery = true)
-    void setActiveById(@Param("id") int id, @Param("value") boolean value);
-
-    User findUserByActivateCode(String code);
+    void setLockById(@Param("id") Long id, @Param("lock") boolean lock);
 }

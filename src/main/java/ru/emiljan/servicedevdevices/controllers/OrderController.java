@@ -7,14 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.Order;
+import ru.emiljan.servicedevdevices.models.CustomOrder;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 /**
  * @author EM1LJAN
@@ -32,14 +31,14 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model,
+    public String show(@PathVariable("id") Long id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
 
         User user = userService.findUserByNickname(currentUser.getUsername());
-        Order order = orderService.findById(id);
+        CustomOrder order = orderService.findById(id);
         User customer = order.getUser();
 
-        if(user == customer || user.getRoles().stream().anyMatch(role ->
+        if(user.getId() == customer.getId() || user.getRoles().stream().anyMatch(role ->
                 role.getId()==2)){
             model.addAttribute("customer", customer);
             model.addAttribute("order", order);
@@ -50,7 +49,7 @@ public class OrderController {
     }
 
     @GetMapping("/new")
-    public String newOrder(@ModelAttribute("order") Order order,
+    public String newOrder(@ModelAttribute("order") CustomOrder order,
                            Model model, Principal user){
         model.addAttribute("user",
                 userService.findUserByNickname(user.getName()));
@@ -59,16 +58,13 @@ public class OrderController {
 
     @PostMapping
     public String createOrder(Model model, Principal user,
-                              @ModelAttribute("order") @Valid Order order,
+                              @ModelAttribute("order") @Valid CustomOrder order,
                               BindingResult bindingResult){
         User customer = userService.findUserByNickname(user.getName());
         model.addAttribute("user", customer);
-        List<String> errors = orderService.checkRepeats(order);
-        if(!errors.isEmpty()){
-            for (int i = 0; i < errors.size()/2+1; i+=2) {
-                bindingResult.rejectValue(errors.get(i), "error.user",
-                        errors.get(i+1));
-            }
+        if(orderService.checkTitle(order)){
+                bindingResult.rejectValue("title", "error.user",
+                        "Данное наименнование проекта уже использовалось");
         }
         if(bindingResult.hasErrors()){
             return "orders/create_order";

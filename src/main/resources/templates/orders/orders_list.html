@@ -19,11 +19,29 @@
             </div>
         </div>
         <div class="user-container">
-            <div th:each="order : ${orders}">
-                <h2>
-                    <a th:href="@{/orders/{id}(id=${order.getId()})}" th:text="${order.getTitle() + ' ' + order.getDescription()}">ORDER_INFO</a>
-                </h2>
-            </div>
+            <table>
+                <tr>
+                    <th>Наименование проекта</th>
+                    <th>Дата создания</th>
+                    <th>Дата последнего изменеия</th>
+                    <th>Статус</th>
+                    <th>Цена</th>
+                </tr>
+                <div th:each="order : ${orders}">
+                    <tr>
+                        <td><div th:text="${order.getTitle()}">TITLE</div></td>
+                        <td><div th:text="${order.getCreated()}">DATA_CREATED</div></td>
+                        <td><div th:text="${order.getUpdated()}">DATA_UPDATED</div></td>
+                        <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
+                        <td><div th:text="${order.getPrice()}">PRICE</div></td>
+                        <td>
+                            <form th:action="@{/orders/{id}(id=${order.getId()})}">
+                                <input type="submit" value="Перейти к заказу">
+                            </form>
+                        </td>
+                    </tr>
+                </div>
+            </table>
         </div>
         <div class="footer">
 

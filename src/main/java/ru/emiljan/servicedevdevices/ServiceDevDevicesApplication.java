@@ -15,9 +15,4 @@ public class ServiceDevDevicesApplication {
 		SpringApplication.run(ServiceDevDevicesApplication.class, args);
 	}
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
 }

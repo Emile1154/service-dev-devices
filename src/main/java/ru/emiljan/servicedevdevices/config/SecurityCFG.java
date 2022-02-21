@@ -20,7 +20,8 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
     private final MyUserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityCFG(BCryptPasswordEncoder bCryptPasswordEncoder, MyUserDetailsService userDetailsService) {
+    public SecurityCFG(BCryptPasswordEncoder bCryptPasswordEncoder,
+                       MyUserDetailsService userDetailsService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDetailsService = userDetailsService;
     }
@@ -34,8 +35,8 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                csrf().disable()
+        http
+                .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/").permitAll()
                     .antMatchers("/orders/**").authenticated()

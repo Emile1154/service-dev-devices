@@ -14,7 +14,7 @@ import ru.emiljan.servicedevdevices.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author EM1LJAN
@@ -26,19 +26,21 @@ public class UserController {
     private final OrderService orderService;
 
     @Autowired
-    public UserController(UserService userService, OrderService orderService) {
+    public UserController(UserService userService,
+                          OrderService orderService) {
         this.userService = userService;
         this.orderService = orderService;
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model,
+    public String show(@PathVariable("id") Long id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
-        model.addAttribute("user", userService.findById(id));
+        User user = userService.findById(id);
+        model.addAttribute("user", user);
         if(currentUser != null){
-            User user = userService.findUserByNickname(currentUser.getUsername());
-            model.addAttribute("currentUser", user);
-            model.addAttribute("roles", user.getRoles());
+            User authUser = userService.findUserByNickname(currentUser.getUsername());
+            model.addAttribute("currentUser", authUser);
+            model.addAttribute("roles", authUser.getRoles());
         }
         return "users/show";
     }
@@ -68,11 +70,10 @@ public class UserController {
     @PostMapping
     public String create(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult, Model model){
-        List<String> errors = userService.checkRepeats(user);
+        Map<String,String> errors = userService.checkRepeats(user);
         if(!errors.isEmpty()){
-            for (int i = 0; i <= errors.size()/2 + 1; i+=2) {
-                bindingResult.rejectValue(errors.get(i), "error.user",
-                        errors.get(i+1));
+            for(Map.Entry<String,String> pair : errors.entrySet() ){
+                bindingResult.rejectValue(pair.getKey(),"error.user", pair.getValue());
             }
         }
         if(bindingResult.hasErrors()){
@@ -129,6 +130,4 @@ public class UserController {
         }
         return error;
     }
-
-
 }

@@ -4,16 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.Image;
 import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 import ru.emiljan.servicedevdevices.specifications.UserSpecifications;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -25,16 +24,19 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailSenderService mailSender;
+    private final ImageRepository imageRepository;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       MailSenderService mailSender) {
+                       MailSenderService mailSender,
+                       ImageRepository imageRepo) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSender = mailSender;
+        this.imageRepository = imageRepo;
     }
 
     public User findUserByEmail(String email) {
@@ -46,7 +48,10 @@ public class UserService {
     }
 
 
-    public String formatPhone(String phoneNumber){
+    private String formatPhone(String phoneNumber){
+        if(phoneNumber.isEmpty()){
+            return null;
+        }
         phoneNumber = phoneNumber.
                 replaceAll("\\D", "");
         String AAA, BBB, CC, DD;
@@ -66,25 +71,22 @@ public class UserService {
         return "+7"+"("+ AAA +")" + BBB + "-" + CC + "-" + DD;
     }
 
-    public List<String> checkRepeats(User user){
-        List<String> errors = new ArrayList<>();
+    public Map<String, String> checkRepeats(User user){
+        Map<String,String> errors = new HashMap<>();
         user.setPhone(formatPhone(user.getPhone()));
         if(userRepository.findByPhone(user.getPhone())!=null){
-            errors.add("phone"); //field
-            errors.add("Данный номер телефона уже занят :(");//msg
+            errors.put("phone","Данный номер телефона уже занят :(");
         }
-
         if(userRepository.findByNickname(user.getNickname())!=null){
-            errors.add("nickname");//field
-            errors.add("Это имя уже занято :(");//msg
+            errors.put("nickname", "Это имя уже занято :(");
         }
         if(userRepository.findByEmail(user.getEmail())!=null){
-            errors.add("email");//field
-            errors.add("Данный почтовый адрес уже занят :(");//msg
+            errors.put("email", "Данный почтовый адрес уже занят :(");//field
         }
         return errors;
     }
 
+    @Transactional
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.
                 encode(user.getPassword()));
@@ -93,6 +95,9 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setActive(false);
         user.setActivateCode(UUID.randomUUID().toString());
+        Image defaultIcon = imageRepository.getById(1L);
+
+        user.setImage(defaultIcon);
 
         String message = String.format("Привет, %s! \n" +
                 "Если Вы получили данное письмо, то значит регистрация аккаунта на сервисе прошла успешно," +
@@ -102,6 +107,7 @@ public class UserService {
 
         mailSender.send(user.getEmail(), "Активация аккаунта", message);
         userRepository.save(user);
+        imageRepository.save(defaultIcon);
     }
 
 
@@ -118,16 +124,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void deleteById(int id){
+    @Transactional
+    public void deleteById(Long id){
         userRepository.deleteById(id);
     }
 
-    public User findById(int id){
+    public User findById(Long id){
         return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
-    public void BanUserById(int id, boolean param){
+    public void BanUserById(Long id, boolean param){
         userRepository.setLockById(id, param);
     }
 
@@ -135,7 +142,8 @@ public class UserService {
     public boolean activateUser(String code) {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){
-            userRepository.setActiveById(user.getId(), true);
+            user.setActive(true);
+            userRepository.save(user);
             return true;
         }
         return false;

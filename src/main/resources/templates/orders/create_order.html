@@ -27,6 +27,7 @@
                 <textarea th:field="*{description}" id="description" cols="60" rows="10" placeholder="Опишите вашу идею"></textarea>
                 <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="validation-message">DESCRIPTION_ERROR</div>
                 <br/>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="submit" value="Enter!"/>
             </form>
         </div>
