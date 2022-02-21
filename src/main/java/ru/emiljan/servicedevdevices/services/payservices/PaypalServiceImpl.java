@@ -1,4 +1,4 @@
-package ru.emiljan.servicedevdevices.services;
+package ru.emiljan.servicedevdevices.services.payservices;
 
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.emiljan.servicedevdevices.models.*;
+import ru.emiljan.servicedevdevices.models.payment.PayStatus;
+import ru.emiljan.servicedevdevices.models.payment.Payment;
+import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
 import ru.emiljan.servicedevdevices.repositories.OrderRepository;
-import ru.emiljan.servicedevdevices.repositories.PaypalRepository;
+import ru.emiljan.servicedevdevices.repositories.payrepo.PaypalRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,7 +26,7 @@ import java.util.NoSuchElementException;
  * @author EM1LJAN
  */
 @Service
-public class PaypalServiceImpl implements PaymentService{
+public class PaypalServiceImpl implements PaymentService {
 
     private final PayPalHttpClient payPalHttpClient;
     private final PaypalRepository paypalRepository;
@@ -44,8 +48,12 @@ public class PaypalServiceImpl implements PaymentService{
 
     @Override
     @SneakyThrows
-    public Payment createOrder(Double moneyAmount, URI returnURI) {
-        final OrderRequest orderRequest = createOrderRequest(moneyAmount, returnURI);
+    public Payment createOrder(URI returnURI, Long order_id) {
+        final CustomOrder payOrder = orderRepository.findById(order_id).orElse(null);
+        if(payOrder==null || payOrder.getPrice().equals(BigDecimal.ZERO)){
+            return null;
+        }
+        final OrderRequest orderRequest = createOrderRequest(payOrder.getPrice().doubleValue(), returnURI);
         final OrdersCreateRequest request = new OrdersCreateRequest().requestBody(orderRequest);
         final HttpResponse<Order> orderHttpResponse = payPalHttpClient.execute(request);
         final Order order = orderHttpResponse.result();
@@ -90,7 +98,7 @@ public class PaypalServiceImpl implements PaymentService{
     public boolean captureOrder(String token) {
         final OrdersCaptureRequest request = new OrdersCaptureRequest(token);
         try{
-            final HttpResponse<Order> response = payPalHttpClient.execute(request);
+            payPalHttpClient.execute(request);
             return true;
         }catch (IOException e){
             e.printStackTrace();
@@ -114,6 +122,7 @@ public class PaypalServiceImpl implements PaymentService{
         paypal.setPayStatus(PayStatus.PAYED);
         CustomOrder order = paypal.getOrder();
         order.setOrderStatus(Status.PAYED);
+        order.setPrice(BigDecimal.ZERO);
         orderRepository.save(order);
         paypalRepository.save(paypal);
     }

@@ -1,6 +1,7 @@
-package ru.emiljan.servicedevdevices.models;
+package ru.emiljan.servicedevdevices.models.payment;
 
 import lombok.*;
+import ru.emiljan.servicedevdevices.models.payment.Payment;
 
 import javax.persistence.*;
 import java.net.URI;

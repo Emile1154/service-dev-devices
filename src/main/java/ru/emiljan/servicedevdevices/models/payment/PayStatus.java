@@ -1,4 +1,4 @@
-package ru.emiljan.servicedevdevices.models;
+package ru.emiljan.servicedevdevices.models.payment;
 
 /**
  * @author EM1LJAN

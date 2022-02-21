@@ -1,12 +1,14 @@
 package ru.emiljan.servicedevdevices.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.PaypalPayment;
-import ru.emiljan.servicedevdevices.services.PaymentService;
+import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
+import ru.emiljan.servicedevdevices.services.payservices.PaymentService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -21,7 +23,8 @@ public class PaypalController {
     private final PaymentService paymentService;
     private static final String FAIL_PAY_PAGE = "/paypalFail";
 
-    public PaypalController(PaymentService paymentService) {
+    @Autowired
+    public PaypalController(@Qualifier("paypalServiceImpl") PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 
@@ -41,13 +44,11 @@ public class PaypalController {
 
     @PostMapping("/pay/current-order/{id}")
     public String initBuy(@PathVariable("id") Long orderId,
-                             @RequestParam Double moneyAmount,
                              HttpServletRequest request,
                              @AuthenticationPrincipal UserDetails user){
         final URI captureUrl = buildCaptureUrl(request);
-        PaypalPayment payment = (PaypalPayment) paymentService.createOrder(moneyAmount, captureUrl);
+        PaypalPayment payment = (PaypalPayment) paymentService.createOrder(captureUrl, orderId);
         paymentService.save(payment, user.getUsername(), orderId);
-
         return "redirect:"+ payment.getPaypalApproveLink();
     }
 

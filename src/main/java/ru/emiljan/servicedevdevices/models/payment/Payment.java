@@ -1,9 +1,11 @@
-package ru.emiljan.servicedevdevices.models;
+package ru.emiljan.servicedevdevices.models.payment;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ru.emiljan.servicedevdevices.models.CustomOrder;
+import ru.emiljan.servicedevdevices.models.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

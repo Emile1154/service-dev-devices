@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class PayPalCFG {
 
     @Value("${paypal.clientId}")
-    String clientId;
+    private static String clientId;
     @Value("${paypal.clientSecret}")
-    String clientSecret;
+    private static String clientSecret;
 
     @Bean
     public PayPalHttpClient payPalHttpClient(){

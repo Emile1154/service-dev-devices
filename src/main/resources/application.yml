@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_db
     username: admin
-    password: password
+    password: 250802wasd
     tomcat:
       validation-query: SELECT 1
       test-while-idle: true
@@ -19,14 +19,18 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: yandex@yandex.ru
-    password: password
+    username: laim778@yandex.ru
+    password: bvemnrerwyxdleix
     protocol: smtps
   sql:
     init:
       mode: always
 
 paypal:
-  clientId: some client id
-  clientSecret: some client secret
+  clientId: AYorBMEX1pnSw2vIsrEl0h5BmQldeaPlu8KS0mATQvHJ6wra9MT_thFLUQhrwTWP-5VonDWXTMLBToRn
+  clientSecret: EFJy1rn2dVRZhZavmmvfCDsJOL_eU_1aeQyx6WIqansdwutGiZqPJ78GtgOkPjvVRmR4jUwHQVdD582s
+vkpay:
+  clientId: 627fdbfa24232a5b62f9c295baa93f7db9752873
+  clientSecret: ug3CQvCkfRyI6svLVpC
+
 
