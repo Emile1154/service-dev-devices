@@ -15,6 +15,7 @@ import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
 import ru.emiljan.servicedevdevices.repositories.OrderRepository;
 import ru.emiljan.servicedevdevices.repositories.payrepo.PaypalRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
+import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ public class PaypalServiceImpl implements PaymentService {
     private final PaypalRepository paypalRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private final NotifyService notifyService;
 
     private static final String APPROVE_REL = "approve";
 
@@ -39,11 +41,13 @@ public class PaypalServiceImpl implements PaymentService {
     public PaypalServiceImpl(PayPalHttpClient payPalHttpClient,
                              PaypalRepository paypalRepository,
                              UserRepository userRepository,
-                             OrderRepository orderRepository) {
+                             OrderRepository orderRepository,
+                             NotifyService notifyService) {
         this.payPalHttpClient = payPalHttpClient;
         this.paypalRepository = paypalRepository;
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.notifyService = notifyService;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class PaypalServiceImpl implements PaymentService {
     }
 
     private OrderRequest createOrderRequest(Double moneyAmount, URI captureUrl) {
-        OrderRequest orderRequest = new OrderRequest();
+        final OrderRequest orderRequest = new OrderRequest();
         orderRequest.checkoutPaymentIntent("CAPTURE");
         orderRequest.purchaseUnits(getPurchaseList(moneyAmount));
         orderRequest.applicationContext(getContext(captureUrl));
@@ -109,9 +113,15 @@ public class PaypalServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void save(Payment payment, String username, Long orderId) {
+        final User user = this.userRepository.findByNickname(username);
+        final CustomOrder order = this.orderRepository.findById(orderId).orElse(null);
+        if(user == null || order == null){
+            System.out.println("THIS ORDER OR USER HAS NOT FOUND IN DATABASE");
+            return;
+        }
         payment.setPayStatus(PayStatus.CANCELED);
-        payment.setUser(userRepository.findByNickname(username)); //fix this later
-        payment.setOrder(orderRepository.findById(orderId).orElse(null)); //fix this later
+        payment.setUser(user);
+        payment.setOrder(order);
         paypalRepository.save((PaypalPayment) payment);
     }
 
@@ -123,6 +133,7 @@ public class PaypalServiceImpl implements PaymentService {
         CustomOrder order = paypal.getOrder();
         order.setOrderStatus(Status.PAYED);
         order.setPrice(BigDecimal.ZERO);
+        notifyService.createNotify("buy", order.getUser());
         orderRepository.save(order);
         paypalRepository.save(paypal);
     }

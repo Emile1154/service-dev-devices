@@ -1,11 +1,15 @@
-var params = {}
-var xhr = new XMLHttpRequest();
-xhr.open('POST', 'http://localhost:8080/api/v1/vk-pay/4', false);
-xhr.send();
-if (xhr.status != 200) {
-        alert( xhr.status + ': ' + xhr.statusText );
-}
-params = xhr.responseText;
-VK.App.open('vkpay', params);
+payment.onclick = function (){
+        var param = {}
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "http://localhost:8080/api/v1/vk-pay/"+order_id, false);
+        xhttp.setRequestHeader(header, token);
+        xhttp.send();
+        if (xhttp.status != 200) {
+                alert( xhttp.status + ': ' + xhttp.statusText );
+        }else {
+                param = xhttp.responseText;
+                VK.App.open('vkpay', param);
+        }
+};
 
 

@@ -1,5 +1,6 @@
 package ru.emiljan.servicedevdevices.controllers;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +40,7 @@ public class OrderController {
         User customer = order.getUser();
 
         if(user.getId() == customer.getId() || user.getRoles().stream().anyMatch(role ->
-                role.getId()==2)){
+                role.getId()>=2)){
             model.addAttribute("customer", customer);
             model.addAttribute("order", order);
             model.addAttribute("user", user);
@@ -72,5 +73,13 @@ public class OrderController {
         order.setUser(customer);
         orderService.saveOrder(order);
         return "success";
+    }
+
+    @GetMapping("/payments")
+    public String customerIndex(@AuthenticationPrincipal UserDetails user, Model model){
+        User currentUser = this.userService.findUserByNickname(user.getUsername());
+        model.addAttribute("currentUser",currentUser);
+        model.addAttribute("history",currentUser.getPayments());
+        return "payment/payment_list";
     }
 }

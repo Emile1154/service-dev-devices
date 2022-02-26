@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.emiljan.servicedevdevices.models.Image;
-import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
+import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 import ru.emiljan.servicedevdevices.specifications.UserSpecifications;
 
 import java.util.*;
@@ -25,18 +24,19 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailSenderService mailSender;
     private final ImageRepository imageRepository;
+    private final NotifyService notifyService;
 
     @Autowired
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
+    public UserService(UserRepository userRepository, RoleRepository roleRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       MailSenderService mailSender,
-                       ImageRepository imageRepo) {
+                       MailSenderService mailSender, ImageRepository imageRepo,
+                       NotifyService notifyService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSender = mailSender;
         this.imageRepository = imageRepo;
+        this.notifyService = notifyService;
     }
 
     public User findUserByEmail(String email) {
@@ -88,16 +88,12 @@ public class UserService {
 
     @Transactional
     public void saveUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.
-                encode(user.getPassword()));
-        Role userRole = roleRepository.findByRole("ROLE_USER");
-        user.setRoles(new HashSet<>(List.of(userRole)));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRoles(new HashSet<>(List.of(roleRepository.findByRole("ROLE_USER"))));
         user.setAccountNonLocked(true);
         user.setActive(false);
         user.setActivateCode(UUID.randomUUID().toString());
-        Image defaultIcon = imageRepository.getById(1L);
-
-        user.setImage(defaultIcon);
+        user.setImage(this.imageRepository.getById(1L));
 
         String message = String.format("Привет, %s! \n" +
                 "Если Вы получили данное письмо, то значит регистрация аккаунта на сервисе прошла успешно," +
@@ -107,7 +103,6 @@ public class UserService {
 
         mailSender.send(user.getEmail(), "Активация аккаунта", message);
         userRepository.save(user);
-        imageRepository.save(defaultIcon);
     }
 
 
@@ -138,12 +133,11 @@ public class UserService {
         userRepository.setLockById(id, param);
     }
 
-    @Transactional
     public boolean activateUser(String code) {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){
             user.setActive(true);
-            userRepository.save(user);
+            notifyService.createNotify("welcome",user);
             return true;
         }
         return false;

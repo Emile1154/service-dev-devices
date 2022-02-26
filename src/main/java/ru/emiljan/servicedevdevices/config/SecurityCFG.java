@@ -33,15 +33,16 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(bCryptPasswordEncoder);
     }
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/").permitAll()
                     .antMatchers("/orders/**").authenticated()
                     .antMatchers("/users/orders").authenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/manager/**").hasAnyRole("ADMIN","MANAGER")
                 .and()
                     .formLogin().loginPage("/users/login")
                     .usernameParameter("login")

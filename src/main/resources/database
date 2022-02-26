@@ -18,9 +18,23 @@ CREATE TABLE users(
     active BIT NOT NULL DEFAULT 0,
     activation_code VARCHAR(255) UNIQUE,
     image_id BIGINT NOT NULL DEFAULT 1,
+    accept_notify BIT,
     FOREIGN KEY (image_id) REFERENCES images(id)
 )
 ENGINE=InnoDB;
+
+-- Table notifies
+CREATE TABLE notifies(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    created TIMESTAMP,
+    is_read BIT,
+    user_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+)
+ENGINE=InnoDB;
+
 
 -- Table roles
 CREATE TABLE roles(
@@ -70,7 +84,10 @@ ENGINE = InnoDB;
 -- insert data
 INSERT INTO users VALUES (null,'admin', 'laim778@yandex.ru', '+7(996)404-45-13',
                           '$2a$12$25GU6Wki1S3HpZbZNt.BhObLYg4423s.h3xl/8lGMJi2YZK5/lJxS', 1,1 , null,1);
+INSERT INTO users VALUES (null, 'manager', 'www@www.ru', '+7(965)444-55-22', '$2a$12$mzW0bUrVi4SnP.3uvMewb.UyzDSIChy4sITkoEE20GjDOSZCXDZB2',1,1,null,1);
 INSERT INTO roles VALUES (1, 'ROLE_USER');
 INSERT INTO roles VALUES (2, 'ROLE_ADMIN');
 INSERT INTO roles VALUES (3, 'ROLE_MANAGER');
 INSERT INTO user_roles VALUES (1,2);
+INSERT INTO user_roles VALUES (146,3);
+INSERT INTO user_roles VALUES (146,1);

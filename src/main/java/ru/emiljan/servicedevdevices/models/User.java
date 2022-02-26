@@ -23,7 +23,7 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -47,6 +47,9 @@ public class User {
     @Email(message = "Введите действующий адрес почты")
     private String email;
 
+    @Column(name = "accept_notify")
+    private boolean accept_notify;
+
     @Column(name = "account_non_locked", columnDefinition = "true")
     private boolean accountNonLocked;
 
@@ -63,6 +66,9 @@ public class User {
 
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CustomOrder> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Notify> notifies;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments;

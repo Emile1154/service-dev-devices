@@ -1,7 +1,8 @@
-package ru.emiljan.servicedevdevices.controllers;
+package ru.emiljan.servicedevdevices.controllers.payControllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -28,16 +29,16 @@ public class PaypalController {
         this.paymentService = paymentService;
     }
 
-    @GetMapping("/payment-successfully")
+    @GetMapping("/successfully")
     public String thanks(Model model){
         return "payment/thanks";
     }
 
-    @GetMapping("/capture")
+    @PostMapping("/capture")
     public String paymentDone(@RequestParam String token){
         if(paymentService.captureOrder(token)){
             paymentService.update(token);
-            return "redirect:/users/orders";
+            return "redirect:/payment/successfully";
         }
         return "redirect:"+FAIL_PAY_PAGE;
     }

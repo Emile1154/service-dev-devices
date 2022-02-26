@@ -15,6 +15,7 @@
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                    <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
                 </ul>
             </div>
         </div>
@@ -27,7 +28,7 @@
                 <textarea th:field="*{description}" id="description" cols="60" rows="10" placeholder="Опишите вашу идею"></textarea>
                 <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="validation-message">DESCRIPTION_ERROR</div>
                 <br/>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="file" name="orderInfo"/>
                 <input type="submit" value="Enter!"/>
             </form>
         </div>

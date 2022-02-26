@@ -1,6 +1,5 @@
 package ru.emiljan.servicedevdevices.models;
 
-
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class CustomOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 

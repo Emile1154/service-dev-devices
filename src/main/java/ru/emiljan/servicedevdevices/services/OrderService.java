@@ -1,11 +1,13 @@
 package ru.emiljan.servicedevdevices.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.emiljan.servicedevdevices.models.CustomOrder;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.repositories.OrderRepository;
+import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 import ru.emiljan.servicedevdevices.specifications.OrderSpecifications;
 
 import java.math.BigDecimal;
@@ -17,10 +19,13 @@ import java.util.List;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final NotifyService notifyService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        NotifyService notifyService) {
         this.orderRepository = orderRepository;
+        this.notifyService = notifyService;
     }
 
     public CustomOrder findById(Long id){
@@ -50,6 +55,8 @@ public class OrderService {
     @Transactional
     public void saveOrder(CustomOrder order){
         order.setOrderStatus(Status.NEW);
+
+        notifyService.createNotify("order",order.getUser());
         orderRepository.save(order);
     }
 
@@ -74,5 +81,6 @@ public class OrderService {
         order.setOrderStatus(Status.ACCEPTED);
         order.setPrice(price);
         orderRepository.save(order);
+        notifyService.createNotify("info", order.getUser());
     }
 }

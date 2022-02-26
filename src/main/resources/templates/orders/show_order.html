@@ -2,12 +2,30 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
     <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.78/Build/Cesium/Cesium.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Title</title>
 </head>
 <body>
+    <div id="vk_api_transport"></div>
+    <script type="text/javascript">
+        window.vkAsyncInit = function() {
+            VK.init({
+                apiId: 8084738
+            });
+        };
+
+        setTimeout(function() {
+            var el = document.createElement("script");
+            el.type = "text/javascript";
+            el.src = "https://vk.com/js/api/openapi.js?169";
+            el.async = true;
+            document.getElementById("vk_api_transport").appendChild(el);
+        }, 0);
+    </script>
     <div class="wrapper">
         <div class="header">
             <div id="nav">
@@ -17,10 +35,11 @@
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                    <li id="menu_item6"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
                 </ul>
             </div>
         </div>
-        <div class="container-order-information">
+        <div class="content">
             <div class="customer">
                 <a th:href="@{/users/{id}(id=${customer.getId()})}">CUSTOMER</a>
             </div>
@@ -30,25 +49,26 @@
             <div class="description">
                 <div th:text="${order.getDescription()}">TITLE_INFO</div>
             </div>
-        </div>
-        <div th:if="${order.getOrderStatus().name().equals('ACCEPTED')}">
-            <div th:text="'К оплате ' + ${order.getPrice()}"></div>
-            <form th:action="@{/payment/pay/current-order/{id}(id=${order.getId()})}" th:method="post">
-                <button type="submit">Purchase with PayPal</button>
-            </form>
-            <form th:action="@{/api/v1/vk-pay/{id}(id=${order.getId()})}" th:method="post">
+
+            <div th:if="${order.getOrderStatus().name().equals('ACCEPTED')} AND ${user.getId()}==${customer.getId()}">
+                <div th:text="'К оплате ' + ${order.getPrice()}"></div>
+                <form th:action="@{/payment/pay/current-order/{id}(id=${order.getId()})}" th:method="post">
+                    <button type="submit">Purchase with PayPal</button>
+                </form>
                 <button id="payment" type="submit">Purchase with VK</button>
-            </form>
-            <script type="text/javascript" th:src="@{/js/vk-pay-script.js}"></script>
+            </div>
         </div>
     </div>
     <div class="footer">
 
     </div>
-    <script type="text/javascript">
-        VK.init({
-            apiId: 8084738
-        });
+    <script type="text/javascript" th:src="@{/js/vk-pay-script.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var order_id = /*[[${order.getId()}]]*/ null;
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        /*]]>*/
     </script>
 </body>
 </html>

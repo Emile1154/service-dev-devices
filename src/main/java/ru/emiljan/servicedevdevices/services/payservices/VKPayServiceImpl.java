@@ -14,6 +14,7 @@ import ru.emiljan.servicedevdevices.models.payment.*;
 import ru.emiljan.servicedevdevices.repositories.OrderRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 import ru.emiljan.servicedevdevices.repositories.payrepo.VKPayRepository;
+import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -28,26 +29,29 @@ public class VKPayServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final VKPayRepository vkPayRepository;
+    private final NotifyService notifyService;
 
-    @Value(value = "${vkpay.clientId}")
-    private static String merchantPrivateKey;
-    @Value(value = "${vkpay.clientSecret}")
-    private static String clientSecret;
+    private final String merchantPrivateKey;
+    private final String clientSecret;
 
     @Autowired
     public VKPayServiceImpl(OrderRepository orderRepository,
                             UserRepository userRepository,
-                            VKPayRepository vkPayRepository) {
+                            VKPayRepository vkPayRepository,
+                            NotifyService notifyService, @Value(value = "${vkpay.clientId}") String merchantPrivateKey,
+                            @Value(value = "${vkpay.clientSecret}") String clientSecret) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.vkPayRepository = vkPayRepository;
+        this.notifyService = notifyService;
+        this.merchantPrivateKey = merchantPrivateKey;
+        this.clientSecret = clientSecret;
     }
 
     @Override
     public Payment createOrder(URI returnURI, Long orderId) {
-        System.out.println(clientSecret);
         VKPayPayment vkPayPayment = new VKPayPayment();
-        SerializeParam params = buildParam(orderId, vkPayRepository.getMaxId()+1);
+        SerializeParam params = buildParam(orderId, vkPayRepository.getMaxId()+1,returnURI.toString());
         ObjectMapper mapper = new ObjectMapper();
         try{
             String json = mapper.writeValueAsString(params);
@@ -95,26 +99,27 @@ public class VKPayServiceImpl implements PaymentService {
         return DigestUtils.sha1Hex(merchantData + merchantPrivateKey);
     }
 
-    private Data buildData(Long paymentId, Double price){
+    private Data buildData(Long paymentId, Double price, String returnUrl){
         long unixTime = Instant.now().getEpochSecond();
         String merchantData = getMerchantData(unixTime,paymentId,price);
         String merchantSign = getMerchantSign(merchantData);
         return Data.builder()
                     .currency("RUB")
                     .merchant_data(merchantData)  //json (order_id, ts, amount, currency).base64 + merchant.private_key DONE!
+                    .merchant_params(returnUrl)
                     .merchant_sign(merchantSign) //sha1 (merchant.data) DONE!
                     .order_id(String.valueOf(paymentId))
                     .ts(unixTime)
                 .build();
     }
 
-    private SerializeParam buildParam(Long orderId, Long paymentId){
+    private SerializeParam buildParam(Long orderId, Long paymentId, String returnUrl){
         CustomOrder order = orderRepository.findById(orderId).orElse(null);
         assert order != null;
         Double price = order.getPrice().doubleValue();
         return SerializeParam.builder()
                     .amount(price)
-                    .data(buildData(paymentId, price))
+                    .data(buildData(paymentId, price, returnUrl))
                     .description("Test Payment")
                     .merchant_id(8084738)
                     .version(2)
@@ -139,7 +144,10 @@ public class VKPayServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void update(String token) {
-
+    public void update(String id) {
+        VKPayPayment vkPayPayment = vkPayRepository.findVKPayPaymentById(Long.parseLong(id));
+        vkPayPayment.setPayStatus(PayStatus.PAYED);
+        notifyService.createNotify("buy", vkPayPayment.getUser());
+        vkPayRepository.save(vkPayPayment);
     }
 }

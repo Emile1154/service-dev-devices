@@ -1,16 +1,13 @@
-package ru.emiljan.servicedevdevices.controllers;
+package ru.emiljan.servicedevdevices.controllers.userControllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.CustomOrder;
-import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
@@ -34,13 +31,10 @@ public class AdminController {
     public String index(Model model, Principal user,
                         @RequestParam(value = "columns", required = false)
                                 List<String> columns,String keyword){
-
-        model.addAttribute("user",
-                userService.findUserByNickname(user.getName()));
+        model.addAttribute("user", userService.findUserByNickname(user.getName()));
         model.addAttribute("key", keyword);
         if(columns!=null){
-            model.addAttribute("users",
-                    userService.getUsersByKeyword(columns, keyword));
+            model.addAttribute("users", userService.getUsersByKeyword(columns, keyword));
             return "admin/index";
         }
         model.addAttribute("users", userService.findAll());
@@ -54,18 +48,6 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @PostMapping("/orders/update/{id}")
-    public String setOrderStatus(@PathVariable("id") Long id, String input,
-                                 BigDecimal price, Model model){
-        CustomOrder order = orderService.findById(id);
-        if(price.equals(BigDecimal.ZERO) || price.equals(order.getPrice())){
-            orderService.update(order,Status.valueOf(input));
-            return "redirect:/admin/orders";
-        }
-        orderService.update(order,price);
-        return "redirect:/admin/orders";
-    }
-
     @PostMapping("/users/lock/{id}")
     public String banUser(@PathVariable("id") Long id){
         User user = userService.findById(id);
@@ -75,30 +57,13 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping()
+    @GetMapping
     public String adminPanel(Model model, Principal user){
         model.addAttribute("user",
                 userService.findUserByNickname(user.getName()));
-
         return "admin/admin_menu";
     }
 
-    @GetMapping("/orders")
-    public String indexOrders(Model model, Principal user,
-                              @RequestParam(value = "columns", required = false)
-                                      List<String> columns, String keyword){
-        model.addAttribute("user",
-                userService.findUserByNickname(user.getName()));
-        if(columns!=null){
-            model.addAttribute("key", keyword);
-            model.addAttribute("orders",
-                    orderService.findOrdersByKeyword(columns, keyword));
-            return "admin/index_orders";
-        }
-        model.addAttribute("orders",
-                orderService.findAllOrders());
-        return "admin/index_orders";
-    }
 
     @PostMapping("/delete-order/{id}")
     @DeleteMapping("/delete-order/{id}")
