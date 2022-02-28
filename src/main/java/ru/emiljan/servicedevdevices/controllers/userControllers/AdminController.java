@@ -69,6 +69,6 @@ public class AdminController {
     @DeleteMapping("/delete-order/{id}")
     public String deleteOrder(@PathVariable("id") Long id){
         orderService.deleteOrderById(id);
-        return "redirect:/admin/orders";
+        return "redirect:/manager/orders";
     }
 }

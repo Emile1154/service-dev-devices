@@ -1,28 +1,24 @@
-package ru.emiljan.servicedevdevices.models;
+package ru.emiljan.servicedevdevices.models.order;
+
 
 import lombok.*;
 
 import javax.persistence.*;
 
-/**
- * @author EM1LJAN
- */
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Table(name="images")
-public class Image {
+@Table(name="files_info")
+public class FileInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "filename")
+    private String filename;
 
     @Column(name = "content_type")
     private String contentType;
-
-    @Lob
-    private byte[] bytes;
-
 }

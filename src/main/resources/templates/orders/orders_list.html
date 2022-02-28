@@ -31,8 +31,8 @@
                 <div th:each="order : ${orders}">
                     <tr>
                         <td><div th:text="${order.getTitle()}">TITLE</div></td>
-                        <td><div th:text="${#temporals.format(order.getCreated(),'dd.MM.yyyy HH:mm'}">DATA_CREATED</div></td>
-                        <td><div th:text="${#temporals.format(order.getUpdated(),'dd.MM.yyyy HH:mm'}">DATA_UPDATED</div></td>
+                        <td><div th:text="${#temporals.format(order.getCreated(),'dd.MM.yyyy HH:mm')}">DATA_CREATED</div></td>
+                        <td><div th:text="${#temporals.format(order.getUpdated(),'dd.MM.yyyy HH:mm')}">DATA_UPDATED</div></td>
                         <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
                         <td><div th:text="${order.getPrice()}">PRICE</div></td>
                         <td>

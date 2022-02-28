@@ -51,7 +51,7 @@
                     <div th:each="user : ${users}">
                         <tr>
                             <td><div th:text="${user.getId()}">ID</div></td>
-                            <td><a th:href="@{/users/{id}(id=${user.getId()})}"><img th:src=@{'data:image/png;base64,'+${user.getImage().getIcon64()}} width="20px"></a></td>
+                            <td><a th:href="@{/users/{id}(id=${user.getId()})}"><img th:src=@{/image/{id}(id=${user.getImage().getId()})} width="20px"></a></td>
                             <td><div th:text="${user.getNickname}">NICKNAME</div></td>
                             <td>
                                 <div th:each="role : ${user.getRoles()}">

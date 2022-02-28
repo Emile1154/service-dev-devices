@@ -1,6 +1,6 @@
 package ru.emiljan.servicedevdevices.specifications;
 import org.springframework.data.jpa.domain.Specification;
-import ru.emiljan.servicedevdevices.models.CustomOrder;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 
 import javax.persistence.criteria.Predicate;
 import java.util.List;

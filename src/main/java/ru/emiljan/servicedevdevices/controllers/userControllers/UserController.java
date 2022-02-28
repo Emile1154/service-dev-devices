@@ -38,11 +38,11 @@ public class UserController {
         User user = userService.findById(id);
         model.addAttribute("user", user);
         if(currentUser != null){
-            User authUser = userService.findUserByNickname(currentUser.getUsername());
-            model.addAttribute("currentUser", authUser);
-            model.addAttribute("vip", authUser.getRoles()   // id=1 -> USER
-                    .stream().anyMatch(role->role.getId()>=2));         // id=2 -> ADMIN
-        }                                                               // id=3 -> MANAGER
+            User authUser = userService.findUserByNickname(currentUser.getUsername());        // id=1 -> USER
+            boolean authority = authUser.getRoles().stream().anyMatch(role->role.getId()>=2); // id=2 -> ADMIN
+            model.addAttribute("currentUser", authUser);                          // id=3 -> MANAGER
+            model.addAttribute("vip", authority);
+        }
         return "users/show";
     }
 
@@ -122,7 +122,7 @@ public class UserController {
     private String getErrorMessage(HttpServletRequest request){
 
         Exception exception = (Exception) request.getSession()
-                .getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+                .getAttribute("SPRING_LAST_EXCEPTION");
 
         String error;
         if(exception instanceof InternalAuthenticationServiceException) {

@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.CustomOrder;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.payrepo.PaymentRepository;
@@ -57,10 +57,10 @@ public class ManagerController {
         CustomOrder order = orderService.findById(id);
         if(price.equals(BigDecimal.ZERO) || price.equals(order.getPrice())){
             orderService.update(order, Status.valueOf(input));
-            return "redirect:/admin/orders";
+            return "redirect:/manager/orders";
         }
         orderService.update(order,price);
-        return "redirect:/admin/orders";
+        return "redirect:/manager/orders";
     }
 
     @GetMapping("/payments")

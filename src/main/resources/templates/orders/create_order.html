@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="content">
-            <form th:method="post" th:action="@{/orders}" th:object="${order}">
+            <form th:method="post" th:action="@{/orders}" th:object="${order}" enctype="multipart/form-data">
                 <input type="text" th:field="*{title}" id="title" placeholder="Наименнование проекта">
                 <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="validation-message">TITLE_ERROR</div>
                 <br/>
@@ -28,7 +28,24 @@
                 <textarea th:field="*{description}" id="description" cols="60" rows="10" placeholder="Опишите вашу идею"></textarea>
                 <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="validation-message">DESCRIPTION_ERROR</div>
                 <br/>
-                <input type="file" name="orderInfo"/>
+                <div th:if="${select}!=null">
+                    <input type="radio" name="design" id="electronic" th:checked="${select.equals('ONLY_ELECTRONIC')}" value="ONLY_ELECTRONIC"><label for="electronic">Разработка электроники</label>
+                    <br/>
+                    <input type="radio" name="design" id="program" th:checked="${select.equals('ONLY_APP')}" value="ONLY_APP"><label for="program">Разработка ПО</label>
+                    <br/>
+                    <input type="radio" name="design" id="complex" th:checked="${select.equals('COMPLEX')}" value="COMPLEX"><label for="complex">Комплексная разработка</label>
+                    <br/>
+                </div>
+                <div th:if="${select}==null">
+                    <input type="radio" name="design" id="electronic2" checked value="ONLY_ELECTRONIC"><label for="electronic2">Разработка электроники</label>
+                    <br/>
+                    <input type="radio" name="design" id="program2"  value="ONLY_APP"><label for="program2">Разработка ПО</label>
+                    <br/>
+                    <input type="radio" name="design" id="complex2"  value="COMPLEX"><label for="complex2">Комплексная разработка</label>
+                    <br/>
+                </div>
+                <input type="file" th:value="${upload}" name="file"/>
+                <div style="color:red" th:text="${error}">SOME_ERROR</div>
                 <input type="submit" value="Enter!"/>
             </form>
         </div>

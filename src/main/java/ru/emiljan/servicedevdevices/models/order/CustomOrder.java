@@ -1,8 +1,10 @@
-package ru.emiljan.servicedevdevices.models;
+package ru.emiljan.servicedevdevices.models.order;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ru.emiljan.servicedevdevices.models.Status;
+import ru.emiljan.servicedevdevices.models.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -29,12 +31,20 @@ public class CustomOrder {
     @NotEmpty(message = "*Please provide task")
     private String title;
 
+    @OneToOne
+    @JoinColumn(name = "file_id")
+    private FileInfo fileInfo;
+
     @Column(name = "description")
     @NotEmpty(message = "*Please provide description")
     private String description;
 
     @Column(name = "price")
     private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "design_type")
+    private DesignType designType;
 
     @CreationTimestamp
     @Column(name = "created")

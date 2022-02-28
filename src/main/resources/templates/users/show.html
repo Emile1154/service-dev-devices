@@ -25,7 +25,7 @@
                         <li id="menu_item3-"><a href="/about">О нас</a></li>
                         <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                         <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
-                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
+                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="12"></a></li>
                     </ul>
                 </div>
             </div>
@@ -36,12 +36,13 @@
                     <div th:text="${user.getNickname()}">USER_NICKNAME</div>
                 </div>
                 <div class="avatar">
-                    <img th:src=@{'data:image/png;base64,'+${user.getImage().getIcon64()}} width="90px">
+                    <img th:src="@{/image/{id}(id=${user.getImage().getId()})}" width="90px">
                     <div sec:authorize="isAuthenticated()" th:if="${user.getId()} == ${currentUser.getId()}">
                         <form th:action="@{/add-image}" th:method="post" enctype="multipart/form-data">
                             <input type="file" name="image" accept="image/png, image/jpeg, image/gif" id="">
                             <input type="submit" value="Загрузить">
                         </form>
+                        <div class="error-message" th:text="${error}">IMAGE_LOAD_ERROR</div>
                     </div>
                 </div>
                 <div sec:authorize="isAuthenticated()">

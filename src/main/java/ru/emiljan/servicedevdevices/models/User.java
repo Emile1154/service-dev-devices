@@ -2,6 +2,7 @@ package ru.emiljan.servicedevdevices.models;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.payment.Payment;
 
 import javax.persistence.*;

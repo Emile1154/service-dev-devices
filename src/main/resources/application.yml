@@ -19,18 +19,25 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: email778@yandex.ru
-    password: password
+    username: mail778@yandex.ru
+    password:
     protocol: smtps
   sql:
     init:
       mode: always
 vkpay:
-  clientId: some-clientId
-  clientSecret: some-secret
+  clientId:
+  clientSecret:
 paypal:
-  clientId: some-clientId
-  clientSecret: some-secret
+  clientId:
+  clientSecret:
+upload:
+  order:
+    path: C:/Users/HOME-PC/Desktop/project/orders/
+    types: application/pdf,application/msdoc,application/vnd
+  image:
+    types: image/gif,image/png,image/jpeg
+
 notifies:
   ru:
     welcome:
@@ -46,4 +53,4 @@ notifies:
       title: Вы успешно создали заказ!
       message: Ваш заказ сейчас на расмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.
 server:
-  port: 8080
+  port: 9000
