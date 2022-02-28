@@ -28,6 +28,9 @@
                 <div th:text="${msg}">SOME_MSG</div>
                 <input type="submit" value="Enter!"/>
             </form>
+            <form th:action="@{/vk/auth}">
+                <input type="submit" value="Sign by VK"/>
+            </form>
             <form th:method="GET" th:action="@{/users/registration}" >
                 <input type="submit" value="Регистрация"/>
             </form>

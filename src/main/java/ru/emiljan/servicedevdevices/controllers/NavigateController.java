@@ -12,11 +12,11 @@ import java.security.Principal;
  * @author EM1LJAN
  */
 @Controller
-public class MainController {
+public class NavigateController {
     private final UserService userService;
 
     @Autowired
-    public MainController(UserService userService) {
+    public NavigateController(UserService userService) {
         this.userService = userService;
     }
 

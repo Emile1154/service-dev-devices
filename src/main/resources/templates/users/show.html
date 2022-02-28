@@ -25,6 +25,7 @@
                         <li id="menu_item3-"><a href="/about">О нас</a></li>
                         <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                         <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
+                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
                     </ul>
                 </div>
             </div>
@@ -44,7 +45,7 @@
                     </div>
                 </div>
                 <div sec:authorize="isAuthenticated()">
-                    <div th:if="${user.getId()} == ${currentUser.getId()} OR ${roles.iterator().next().getId()}==2">
+                    <div th:if="${user.getId()} == ${currentUser.getId()} OR ${vip}">
                         <div class="info">
                             <div id="user-email">
                                 <div th:text="${user.getEmail()}">USER_EMAIL</div>
@@ -52,6 +53,14 @@
                             <div id="user-phone">
                                 <div th:text="${user.getPhone()}">USER_PHONE</div>
                             </div>
+                        </div>
+                        <div class="view-add-info" th:if="${vip} AND ${user.getId()} != ${currentUser.getId()}")>
+                            <form method="get" th:action="@{/manager/orders/{id}(id=${user.getId()})}">
+                                <input type="submit" value="Показать заказы пользователя"/>
+                            </form>
+                            <form method="get" th:action="@{/manager/payments/{id}(id=${user.getId()})}">
+                                <input type="submit" value="Платежи пользователя"/>
+                            </form>
                         </div>
                         <div class="user-action" th:if="${user.getId()} == ${currentUser.getId()}">
                             <div sec:authorize="hasRole('USER')">
@@ -62,9 +71,17 @@
                                 </div>
                                 <div id="btn-show-order">
                                     <form th:action="@{/users/orders}" method="get">
-                                        <input type="submit" value="Мои заказы"/>
+                                        <input type="submit" value="Управление заказами"/>
                                     </form>
                                 </div>
+                            </div>
+                            <div sec:authorize="hasRole('MANAGER')">
+                                <form th:action="@{/manager/orders}" method="get">
+                                    <input type="submit" value="Управление заказами"/>
+                                </form>
+                                <form th:action="@{/manager/payments}" method="get">
+                                    <input type="submit" value="История платежей"/>
+                                </form>
                             </div>
                             <div sec:authorize="hasRole('ADMIN')">
                                 <form th:action="@{/admin}" method="get">

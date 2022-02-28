@@ -17,6 +17,7 @@ import lombok.Setter;
 public class Data {
     private String currency;
     private String merchant_data;
+    private String merchant_params;
     private String merchant_sign;
     private String order_id;
     private long ts;

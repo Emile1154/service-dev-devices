@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
-    <title>ADMIN</title>
+    <title>Your notifies</title>
 </head>
 <body>
     <div class="wrapper">
@@ -19,22 +19,28 @@
                 </ul>
             </div>
         </div>
-        <div class="content">
-            <form th:method="get" th:action="@{/admin/users}">
-                <input type="submit" value="User list"/>
-            </form>
-            <br/>
-            <form th:method="get" th:action="@{/manager/orders}">
-                <input type="submit" value="Order list"/>
-            </form>
-            <br/>
-            <form th:action="@{/manager/payments}" method="get">
-                <input type="submit" value="Payments">
-            </form>
-        </div>
-        <div class="footer">
-
-        </div>
     </div>
+    <div class="content">
+        <table>
+            <tr>
+                <th>title</th>
+                <th>date</th>
+            </tr>
+            <div th:each="notify : ${notifies}">
+                <tr>
+                    <td th:text="${notify.getTitle()}">TITLE</td>
+                    <td th:text="${#temporals.format(notify.getCreated(),'dd.MM.yyyy HH:mm')}">DATE</td>
+                    <td>
+                        <form th:action="@{/users/notify/show/{id}(id=${notify.getId()})}" method="get">
+                            <input type="submit" value="Подробней...">
+                        </form>
+                    </td>
+                </tr>
+            </div>
+        </table>
+    </div>
+    <footer>
+
+    </footer>
 </body>
 </html>

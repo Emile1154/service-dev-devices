@@ -9,4 +9,5 @@ import ru.emiljan.servicedevdevices.models.payment.VKPayPayment;
 public interface VKPayRepository extends JpaRepository<VKPayPayment, Long> {
     @Query(value = "SELECT coalesce(max(id),0) FROM payments", nativeQuery = true)
     Long getMaxId();
+    VKPayPayment findVKPayPaymentById(Long id);
 }

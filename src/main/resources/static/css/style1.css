@@ -7,15 +7,13 @@
     width:100%;
 }
 
-
-
 #nav .menu {
     border:1px solid #d1d1d1;
     border-left:none;
     border-right:none;
     clear:both;
-    width: 35%;
-    margin-left: 500px;
+    width: 36%;
+    margin-left: 510px;
 }
 .menu li {
     display:inline-block;

@@ -1,4 +1,4 @@
-package ru.emiljan.servicedevdevices.controllers;
+package ru.emiljan.servicedevdevices.controllers.userControllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -40,8 +40,9 @@ public class UserController {
         if(currentUser != null){
             User authUser = userService.findUserByNickname(currentUser.getUsername());
             model.addAttribute("currentUser", authUser);
-            model.addAttribute("roles", authUser.getRoles());
-        }
+            model.addAttribute("vip", authUser.getRoles()   // id=1 -> USER
+                    .stream().anyMatch(role->role.getId()>=2));         // id=2 -> ADMIN
+        }                                                               // id=3 -> MANAGER
         return "users/show";
     }
 
@@ -49,10 +50,11 @@ public class UserController {
     public String myOrders(Model model,
                            @AuthenticationPrincipal UserDetails currentUser){
         if(currentUser != null){
-            User user = userService.findUserByNickname(currentUser.getUsername());
+            User user = this.userService.findUserByNickname(currentUser.getUsername());
+
             model.addAttribute("user", user);
-            model.addAttribute("orders", orderService.
-                    findOrdersByUserId(user.getId()));
+            model.addAttribute("orders",
+                    this.orderService.findOrdersByUserId(user.getId()));
         }
         return "orders/orders_list";
     }
@@ -69,8 +71,9 @@ public class UserController {
 
     @PostMapping
     public String create(@ModelAttribute("user") @Valid User user,
-                         BindingResult bindingResult, Model model){
+                         BindingResult bindingResult, Model model, boolean accept){
         Map<String,String> errors = userService.checkRepeats(user);
+        model.addAttribute("ch", accept);
         if(!errors.isEmpty()){
             for(Map.Entry<String,String> pair : errors.entrySet() ){
                 bindingResult.rejectValue(pair.getKey(),"error.user", pair.getValue());

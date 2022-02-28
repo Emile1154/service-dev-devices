@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @DiscriminatorColumn(name = "pay_method", discriminatorType = DiscriminatorType.STRING)
 public abstract class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     protected Long id;
 
@@ -36,6 +36,9 @@ public abstract class Payment {
     @Enumerated(EnumType.STRING)
     @Column(name = "pay_status")
     protected PayStatus payStatus;
+
+    @Column(name = "pay_method", insertable = false, updatable = false)
+    private String payMethod;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

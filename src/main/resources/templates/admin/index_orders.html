@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
@@ -15,68 +15,70 @@
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
+                    <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
                 </ul>
             </div>
         </div>
-        <div class="admin-container">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/cookiesjs/1.4.2/cookies.min.js"></script>
-            <form id="ch" th:action="@{/admin/orders}" method="get">
-                <input type="text" th:value="${key}" placeholder="Search..." name="keyword">
-                <input id="ch1" type="checkbox" checked name="columns" value="id"><label for="ch1">ID</label>
-                <input id="ch2" type="checkbox" name="columns" value="userId"><label for="ch2">USER ID</label>
-                <input id="ch3" type="checkbox" name="columns" value="title"><label for="ch3">TITLE</label>
-                <input id="ch4" type="checkbox" name="columns" value="orderStatus"><label for="ch4">STATUS</label>
-                <button onclick="location.replace('#toPrim'); location.reload();" type="submit">Go</button>
-            </form>
-            <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>USER ID</th>
-                    <th>TITLE</th>
-                    <th>STATUS</th>
-                    <th>PRICE</th>
-                    <th>CREATED</th>
-                    <th>UPDATED</th>
-                    <th>SET STATUS</th>
-                </tr>
-                <div th:each="order : ${orders}">
-                    <tr>
-                        <td><a th:href="@{/orders/{id}(id=${order.getId()})}"
-                               th:text="${order.getId()}">ORDER_ID</a></td>
-                        <td><a th:href="@{/users/{id}(id=${order.getUser().getId()})}"
-                               th:text="${order.getUser().getId()}">USER_ID</a></td>
-                        <td><div th:text="${order.getTitle()}">TITLE</div></td>
-                        <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
-                        <td><div th:text="${order.getPrice()}">PRICE</div></td>
-                        <td><div th:text="${order.getCreated()}">CREATED</div></td>
-                        <td><div th:text="${order.getUpdated()}">UPDATED</div></td>
-                        <td>
-                            <form th:method="post" th:action="@{/admin/orders/update/{id}(id=${order.getId()})}">
-                                <input id="status-new" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('NEW')}" value="NEW"><label for="status-new">NEW</label>
-                                <input id="status-accept" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('ACCEPTED')}" value="ACCEPTED"><label for="status-accept">ACCEPTED</label>
-                                <input id="status-cancel" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CANCELED')}" value="CANCELED"><label for="status-cancel">CANCELED</label>
-                                <input id="status-pay" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('PAYED')}" value="PAYED"><label for="status-pay">PAYED</label>
-                                <input id="status-close" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CLOSED')}" value="CLOSED"><label for="status-close">CLOSED</label>
-                                <input type="number" name="price" placeholder="Цена" step="any" th:value="${order.getPrice()}">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                <button type="submit">SET</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form th:action="@{/admin/orders/set-price/{id}(id=${order.getId()})}" th:method="post">
 
-                            </form>
-                        </td>
-                        <td>
-                            <form th:method="DELETE" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                <input type="submit"  value="Delete"/>
-                            </form>
-                        </td>
+        <div class="container">
+            <div class="container-filter">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/cookiesjs/1.4.2/cookies.min.js"></script>
+                <form id="ch" th:action="@{/manager/orders}" method="get">
+                    <input type="text" th:value="${key}" placeholder="Search..." name="keyword">
+                    <input id="ch1" type="checkbox" checked name="columns" value="id"><label for="ch1">ID</label>
+                    <input id="ch2" type="checkbox" name="columns" value="userId"><label for="ch2">USER ID</label>
+                    <input id="ch3" type="checkbox" name="columns" value="title"><label for="ch3">TITLE</label>
+                    <input id="ch4" type="checkbox" name="columns" value="orderStatus"><label for="ch4">STATUS</label>
+                    <button onclick="location.replace('#toPrim'); location.reload();" type="submit">Go</button>
+                </form>
+                <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
+            </div>
+            <div class="container-table">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>USER ID</th>
+                        <th>TITLE</th>
+                        <th>STATUS</th>
+                        <th>PRICE</th>
+                        <th>CREATED</th>
+                        <th>UPDATED</th>
+                        <th>SET STATUS</th>
                     </tr>
-                </div>
-            </table>
+                    <div th:each="order : ${orders}">
+                        <tr>
+                            <td><a th:href="@{/orders/{id}(id=${order.getId()})}"
+                                   th:text="${order.getId()}">ORDER_ID</a></td>
+                            <td><a th:href="@{/users/{id}(id=${order.getUser().getId()})}"
+                                   th:text="${order.getUser().getId()}">USER_ID</a></td>
+                            <td><div th:text="${order.getTitle()}">TITLE</div></td>
+                            <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
+                            <td><div th:text="${order.getPrice()}">PRICE</div></td>
+                            <td><div th:text="${#temporals.format(order.getCreated(),'dd.MM.yyyy HH:mm')}">CREATED</div></td>
+                            <td><div th:text="${#temporals.format(order.getUpdated(),'dd.MM.yyyy HH:mm')}">UPDATED</div></td>
+                            <td>
+                                <form th:method="post" th:action="@{/manager/orders/update/{id}(id=${order.getId()})}">
+                                    <input id="status-new" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('NEW')}" value="NEW"><label for="status-new">NEW</label>
+                                    <input id="status-accept" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('ACCEPTED')}" value="ACCEPTED"><label for="status-accept">ACCEPTED</label>
+                                    <input id="status-cancel" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CANCELED')}" value="CANCELED"><label for="status-cancel">CANCELED</label>
+                                    <input id="status-pay" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('PAYED')}" value="PAYED"><label for="status-pay">PAYED</label>
+                                    <input id="status-close" type="radio" name="input" th:checked="${order.getOrderStatus().name().equals('CLOSED')}" value="CLOSED"><label for="status-close">CLOSED</label>
+                                    <input type="number" name="price" placeholder="Цена" step="any" th:value="${order.getPrice()}">
+                                    <button type="submit">SET</button>
+                                </form>
+                            </td>
+                            <td>
+                                <div sec:authorize="hasRole('ADMIN')">
+                                    <form th:method="DELETE" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <input type="submit"  value="Delete"/>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                </table>
+            </div>
         </div>
         <div class="footer">
 
