@@ -35,19 +35,16 @@ public class NavigateController {
         }
         return "navigation/dev_menu";
     }
-    @GetMapping("/collection")
-    public String portfolio(Model model, Principal user){
-        if(user != null){
-            model.addAttribute("user", userService.findUserByNickname(user.getName()));
-        }
-        return "navigation/portfolio";
-    }
 
     @GetMapping("/about")
     public String about(Model model, Principal user){
         if(user != null){
-            model.addAttribute("user", userService.findUserByNickname(user.getName()));
+            model.addAttribute("currentUser", userService.findUserByNickname(user.getName()));
         }
+        model.addAttribute("admins",userService.findAllByRole(2L));
+        model.addAttribute("developers",userService.findAllByRole(4L));
+        model.addAttribute("managers",userService.findAllByRole(3L));
+
         return "navigation/about";
     }
 

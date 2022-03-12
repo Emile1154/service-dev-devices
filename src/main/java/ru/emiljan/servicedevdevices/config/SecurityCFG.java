@@ -43,6 +43,7 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users/orders").authenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/manager/**").hasAnyRole("ADMIN","MANAGER")
+                .antMatchers("/developer/**").hasAnyRole("ADMIN","MANAGER","DEVELOPER")
                 .and()
                     .formLogin().loginPage("/users/login")
                     .usernameParameter("login")

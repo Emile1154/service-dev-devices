@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
@@ -100,7 +101,6 @@ public class UserService {
                 " для активации вашего аккаунта перейдите по ссылке: http://localhost:8080/users/activate/%s \n" +
                         "Если проходили регистрацию не Вы, то проигнорируйте это письмо.",
                 user.getNickname(),user.getActivateCode());
-
         mailSender.send(user.getEmail(), "Активация аккаунта", message);
         userRepository.save(user);
     }
@@ -119,6 +119,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> findAllByRole(Long id){
+        return userRepository.findAllByRoles(id);
+    }
+
     @Transactional
     public void deleteById(Long id){
         userRepository.deleteById(id);
@@ -129,8 +133,13 @@ public class UserService {
     }
 
     @Transactional
-    public void BanUserById(Long id, boolean param){
+    public void banUserById(Long id, boolean param){
         userRepository.setLockById(id, param);
+    }
+
+    @Transactional
+    public void update(User user){
+        userRepository.save(user);
     }
 
     public boolean activateUser(String code) {

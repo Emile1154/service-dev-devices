@@ -1,11 +1,11 @@
 package ru.emiljan.servicedevdevices.controllers.exceptionHandler;
 
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.emiljan.servicedevdevices.controllers.OrderController;
+import ru.emiljan.servicedevdevices.controllers.project.ProjectController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
@@ -15,11 +15,11 @@ import java.util.Map;
 /**
  * @author EM1LJAN
  */
-@ControllerAdvice(assignableTypes = {OrderController.class})
-public class OrderExceptionHandler {
+@ControllerAdvice(assignableTypes = {OrderController.class, ProjectController.class})
+public class FileExceptionHandler {
 
     @ExceptionHandler(IOException.class)
-    public String createOrderException(IOException ex, RedirectAttributes attributes,
+    public String uploadException(IOException ex, RedirectAttributes attributes,
                                     HttpServletRequest request){
         Map<String, Object> params = (Map<String, Object>) request.getAttribute("map");
         if(params != null){
@@ -27,17 +27,12 @@ public class OrderExceptionHandler {
                 attributes.addFlashAttribute(pair.getKey(),pair.getValue());
             }
         }
-        if(ex instanceof FileSizeLimitExceededException){
-            attributes.addFlashAttribute("error",
-                    "максимальный размер файла превышен");
-            return "redirect:/orders/new";
-        }
         attributes.addFlashAttribute("error",ex.getMessage());
         return "redirect:/orders/new";
     }
 
     @ExceptionHandler(FileNotFoundException.class)
-    public ModelAndView downloadOrderException(HttpServletRequest request){
+    public ModelAndView downloadException(HttpServletRequest request){
         ModelAndView model2 = new ModelAndView("orders/show_order");
         Map<String, Object> attr = (Map<String, Object>) request.getAttribute("map");
         model2.addAllObjects(attr);

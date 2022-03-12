@@ -10,16 +10,30 @@ import java.util.List;
 @Configuration
 public class LoadCFG {
     @Value("${upload.order.path}")
-    private String path;
+    private String orderPath;
+    @Value("${upload.project.path}")
+    private String projectPath;
 
     @Value("#{'${upload.order.types}'.split(',')}")
-    private List<String> allowedTypes;
+    private List<String> orderTypes;
+    @Value("#{'${upload.project.types}'.split(',')}")
+    private List<String> projectTypes;
 
-    @Bean
-    public TransferInfo transferInfoBean(){
+    @Bean("transferOrder")
+    public TransferInfo transferOrderBean(){
         return TransferInfo.builder()
-                    .path(path)
-                    .allowedTypes(allowedTypes)
+                    .id(1)
+                    .path(orderPath)
+                    .allowedTypes(orderTypes)
+                .build();
+    }
+
+    @Bean("transferProject")
+    public TransferInfo transferProjectBean(){
+        return TransferInfo.builder()
+                    .id(2)
+                    .path(projectPath)
+                    .allowedTypes(projectTypes)
                 .build();
     }
 }

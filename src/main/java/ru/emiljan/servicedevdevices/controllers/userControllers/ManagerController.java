@@ -18,6 +18,9 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * @author EM1LJAN
+ */
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
@@ -79,18 +82,6 @@ public class ManagerController {
         return "payment/payment_list";
     }
 
-    @GetMapping("/orders/{id}")
-    public String viewOrders(@PathVariable("id") Long id, Model model,
-                             @AuthenticationPrincipal UserDetails moder){
-        User user = this.userService.findById(id);
-        if(user==null){
-            return null;
-        }
-        model.addAttribute("user", this.userService.findUserByNickname(moder.getUsername()));
-        model.addAttribute("orders", this.orderService.findOrdersByUserId(user.getId()));
-        return "orders/orders_list";
-    }
-
     @GetMapping("/payments/{id}")
     public String viewPayments(@PathVariable("id") Long id, Model model,
                                 @AuthenticationPrincipal UserDetails moder){
@@ -102,4 +93,5 @@ public class ManagerController {
         model.addAttribute("history", this.paymentRepository.findPaymentsByUserId(user.getId()));
         return "payment/payment_list";
     }
+
 }

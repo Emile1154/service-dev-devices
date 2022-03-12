@@ -1,10 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <title>О нас</title>
 </head>
 <body>
+    <div class="wrapper">
+        <div class="header">
+            <div id="nav">
+                <div sec:authorize="isAnonymous()">
+                    <ul class="menu">
+                        <li id="menu_item1"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2"><a href="/portfolio">Портфолио</a></li>
+                        <li id="menu_item3"><a href="/about">О нас</a></li>
+                        <li id="menu_item4"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
+                    </ul>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <ul class="menu">
+                        <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
+                        <li id="menu_item3-"><a href="/about">О нас</a></li>
+                        <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
+                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="12"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <h3>Администрация</h3>
+            <div th:each="admin : ${admins}">
+                <a th:href="@{/users/{id}(id=${admin.getId()})}">
+                    <img th:src=@{/image/{id}(id=${admin.getImage().getId()})} width="50px">
+                    <div th:text="${admin.getNickname()}">NICKNAME</div>
+                </a>
+            </div>
+            <h3>Разработчики</h3>
+            <div th:each="developer : ${developers}">
+                <a th:href="@{/users/{id}(id=${developer.getId()})}">
+                    <img th:src=@{/image/{id}(id=${developer.getImage().getId()})} width="50px">
+                    <div th:text="${developer.getNickname()}">NICKNAME</div>
+                </a>
+            </div>
+            <h3>Менеджеры</h3>
+            <div th:each="manager : ${managers}">
+                <a th:href="@{/users/{id}(id=${manager.getId()})}">
+                    <img th:src=@{/image/{id}(id=${manager.getImage().getId()})} width="50px">
+                    <div th:text="${manager.getNickname()}">NICKNAME</div>
+                </a>
+            </div>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
 
 </body>
 </html>

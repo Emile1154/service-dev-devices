@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.emiljan.servicedevdevices.models.User;
 
+import java.util.List;
+
 /**
  * @author EM1LJAN
  */
@@ -23,4 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long>,
     @Query(value = "UPDATE users SET account_non_locked = :lock WHERE id = :id",
             nativeQuery = true)
     void setLockById(@Param("id") Long id, @Param("lock") boolean lock);
+
+    @Query(value = "SELECT u FROM User u LEFT JOIN u.roles ur WHERE ur.id = :id")
+    List<User> findAllByRoles(@Param("id") Long id);
 }

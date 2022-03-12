@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.order.DesignType;
-import ru.emiljan.servicedevdevices.models.order.TransferInfo;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
@@ -37,15 +36,12 @@ import java.util.Map;
 public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
-    private final TransferInfo transferInfo;
 
     @Autowired
     public OrderController(OrderService orderService,
-                           UserService userService,
-                           TransferInfo transferInfo) {
+                           UserService userService) {
         this.orderService = orderService;
         this.userService = userService;
-        this.transferInfo = transferInfo;
     }
 
     @GetMapping("/{id}")
@@ -72,7 +68,7 @@ public class OrderController {
         final CustomOrder order = this.orderService.findById(orderId);
         final String filename = order.getFileInfo().getFilename();
         final MediaType mediaType = MediaType.valueOf(order.getFileInfo().getContentType());
-        File file = new File(transferInfo.getPath() + filename);
+        File file =  this.orderService.getFileByName(filename);
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("customer",order.getUser());
         attributes.put("order",order);

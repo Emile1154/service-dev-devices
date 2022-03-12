@@ -11,7 +11,7 @@
             <div id="nav">
                 <ul class="menu">
                     <li id="menu_item1-"><a href="/developing">Разработка</a></li>
-                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
@@ -69,8 +69,7 @@
                             </td>
                             <td>
                                 <div sec:authorize="hasRole('ADMIN')">
-                                    <form th:method="DELETE" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <form th:method="post" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
                                         <input type="submit"  value="Delete"/>
                                     </form>
                                 </div>

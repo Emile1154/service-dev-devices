@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class TransferInfo {
+    private int id;
     private String path;
     private List<String> allowedTypes;
 }

@@ -57,5 +57,4 @@ public class ImageController {
                 .contentType(MediaType.valueOf(image.getContentType()))
                 .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
     }
-
 }

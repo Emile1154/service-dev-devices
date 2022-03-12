@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
   jpa:
     hibernate:
       ddl-auto: none
@@ -11,7 +15,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_db
     username: admin
-    password: password
+    password:
     tomcat:
       validation-query: SELECT 1
       test-while-idle: true
@@ -19,7 +23,7 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: mail778@yandex.ru
+    username: yandex@yandex.ru
     password:
     protocol: smtps
   sql:
@@ -31,7 +35,13 @@ vkpay:
 paypal:
   clientId:
   clientSecret:
+
+
+
 upload:
+  project:
+    path: C:/Users/HOME-PC/Desktop/project/projects/
+    types: application/pdf,image/png,image/jpeg
   order:
     path: C:/Users/HOME-PC/Desktop/project/orders/
     types: application/pdf,application/msdoc,application/vnd

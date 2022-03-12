@@ -47,8 +47,8 @@ public class PaypalController {
     public String initBuy(@PathVariable("id") Long orderId,
                              HttpServletRequest request,
                              @AuthenticationPrincipal UserDetails user){
-        final URI captureUrl = buildCaptureUrl(request);
-        PaypalPayment payment = (PaypalPayment) paymentService.createOrder(captureUrl, orderId);
+        PaypalPayment payment = (PaypalPayment)
+                paymentService.createOrder(buildCaptureUrl(request), orderId);
         paymentService.save(payment, user.getUsername(), orderId);
         return "redirect:"+ payment.getPaypalApproveLink();
     }

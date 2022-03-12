@@ -1,10 +1,7 @@
 .menu {
     font-family:"Lato",sans-serif;
     font-size:13px;
-    margin:0;
     overflow:visible;
-    text-align:center;
-    width:100%;
 }
 
 #nav .menu {
@@ -12,8 +9,6 @@
     border-left:none;
     border-right:none;
     clear:both;
-    width: 36%;
-    margin-left: 510px;
 }
 .menu li {
     display:inline-block;
@@ -27,6 +22,25 @@
     line-height:1.0em;
     text-decoration: none;
     text-transform:uppercase;
+}
+
+
+.star-wrapper input{
+    appearance: none;
+}
+
+.star-wrapper input::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+    content: "\f005";
+}
+
+.star-wrapper input:hover::before{
+    font-weight: 900;
+}
+
+.star-wrapper input:checked::before{
+    font-weight: 900;
 }
 
 #nav .menu a:focus{

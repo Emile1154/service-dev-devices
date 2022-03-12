@@ -11,7 +11,7 @@
             <div id="nav">
                 <ul class="menu">
                     <li id="menu_item1-"><a href="/developing">Разработка</a></li>
-                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
@@ -64,13 +64,22 @@
                             <td><div th:text="${user.isAccountNonLocked()}">UNLOCKED</div></td>
                             <td><div th:text="${user.isActive()}">ACTIVE</div></td>
                             <td>
-                                <form th:method="DELETE" th:action="@{/admin/delete-users/{id}(id=${user.getId()})}">
-                                    <input type="submit" value="Delete"/>
+                                <form th:method="post" th:action="@{/admin/users/lock/{id}(id=${user.getId()})}">
+                                    <input type="submit" th:value="${user.isAccountNonLocked() == true}?'BAN':'UNBAN'"/>
                                 </form>
                             </td>
                             <td>
-                                <form th:method="post" th:action="@{/admin/users/lock/{id}(id=${user.getId()})}">
-                                    <input type="submit" th:value="${user.isAccountNonLocked() == true}?'BAN':'UNBAN'"/>
+                                <form th:method="post" th:action="@{/admin/set-role/{id}(id=${user.getId()})}">
+                                    <input id="user" type="checkbox" name="role" th:checked="${user.checkAuthority('USER')}" value="ROLE_USER"><label for="user">USER</label>
+                                    <input id="manager" type="checkbox" name="role" th:checked="${user.checkAuthority('MANAGER')}" value="ROLE_MANAGER"><label for="manager">MANAGER</label>
+                                    <input id="developer" type="checkbox" name="role" th:checked="${user.checkAuthority('DEVELOPER')}" value="ROLE_DEVELOPER"><label for="developer">DEVELOPER</label>
+                                    <input id="admin" type="checkbox" name="role" th:checked="${user.checkAuthority('ADMIN')}" value="ROLE_ADMIN"><label for="admin">ADMIN</label>
+                                    <input type="submit" value="Set"/>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:method="post" th:action="@{/admin/delete-users/{id}(id=${user.getId()})}">
+                                    <input type="submit" value="Delete"/>
                                 </form>
                             </td>
                         </tr>

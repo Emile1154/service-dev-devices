@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
-    <title>Title</title>
+    <title>Портфолио</title>
 </head>
 <body>
     <div class="wrapper">
@@ -31,7 +31,25 @@
             </div>
         </div>
         <div class="content">
-            <h3>Мы в соц. сетях:</h3>
+            <div sec:authorize="hasRole('ADMIN')">
+                <form th:action="@{/portfolio/new}" method="get">
+                    <button type="submit">Добавить проект</button>
+                </form>
+            </div>
+            <h4>Projects</h4>
+            <div class="all-projects-grid">
+                <div th:if="${projects}!=null">
+                    <div th:each="project : ${projects}">
+                        <a th:href="@{/portfolio/{id}(id=${project.getId()})}">
+                            <img th:src="@{/portfolio/image/{id}(id=${project.getPreviewId()})}" width="200">
+                            <div th:text="${project.getTitle()}"></div>
+                        </a>
+                        <form th:action="@{/portfolio/delete/{id}(id=${project.getId()})}" th:method="post">
+                            <input type="submit" value="Remove">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="footer">
 

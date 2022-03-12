@@ -1,6 +1,7 @@
 package ru.emiljan.servicedevdevices.services;
 
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private static final int DEFAULT_IMAGE = 1;
+    private static final long MAX_UPLOAD_SIZE = 1000000L;
 
     @Value("#{'${upload.image.types}'.split(',')}")
     private List<String> allowedTypes;
@@ -36,6 +38,9 @@ public class ImageService {
     public void load(MultipartFile image, User user) throws IOException {
         if(image.getSize() == 0){
             throw new FileUploadException("Файл не загружен");
+        }
+        if(image.getSize()>MAX_UPLOAD_SIZE){
+            throw new FileSizeLimitExceededException("Максимальный размер файла превышен", image.getSize(), MAX_UPLOAD_SIZE);
         }
         if(allowedTypes.stream().noneMatch(type->image.getContentType().contains(type))){
             throw new FileUploadException("Ошибка формата, поддерживаются только png/jpg/gif");
