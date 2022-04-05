@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cc395f8268.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Title</title>
 </head>
 <body>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
+            <div id="nav" class="container text-center">
                 <div sec:authorize="isAnonymous()">
                     <ul class="menu">
                         <li id="menu_item1"><a href="/developing">Разработка</a></li>
@@ -25,17 +28,46 @@
                         <li id="menu_item3-"><a href="/about">О нас</a></li>
                         <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                         <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
-                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="12"></a></li>
+                        <li id="menu_item6-">
+                            <a th:href="@{/users/notify}">
+                                <i class="fas fa-solid fa-bell fa-lg"></i>
+                                <span th:if="${alarm}" class="dot"></span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="content">
-            <h3>Мы в соц. сетях:</h3>
+        <div class="container w-50 p-2">
+            <div class="d-flex justify-content-between">
+                <h3><span class="mb-3 mx-auto badge bg-pill bg-success">Контакты</span></h3>
+                <h3><span class="mb-3 mr-3 badge bg-pill bg-success">Мы в соц. сетях</span></h3>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-column">
+                    <h5><span class="badge bg-pill bg-dark">Телефон</span> +7(999)999-99-99</h5>
+                    <h5><span class="badge bg-pill bg-dark">E-mail</span> example@example.ru</h5>
+                    <h5><span class="badge bg-pill bg-dark">Часы работы</span> пн-пт 9:00-17:00</h5>
+                </div>
+                <div class="mx-auto d-flex flex-row">
+                    <a href="#">
+                        <i class="fab fa-brands fa-telegram fa-2xl"></i>
+                    </a>
+                    <a href="#">
+                        <i class="mx-2 fab fa-vk fa-2xl"></i>
+                    </a>
+                    <a href="#">
+                        <i class="fab fa-brands fa-linkedin fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+
         </div>
         <div class="footer">
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

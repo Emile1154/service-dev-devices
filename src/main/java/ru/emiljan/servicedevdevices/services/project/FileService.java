@@ -3,8 +3,10 @@ package ru.emiljan.servicedevdevices.services.project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.dto.ProjectDTO;
 import ru.emiljan.servicedevdevices.models.order.FileInfo;
 import ru.emiljan.servicedevdevices.models.order.TransferInfo;
+import ru.emiljan.servicedevdevices.models.portfolio.Project;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.FileRepository;
 
 import java.io.File;
@@ -22,15 +24,14 @@ public class FileService {
     public FileInfo getFileInfoById(Long id){
         return fileRepository.getById(id);
     }
-    @Transactional
-    public List<FileInfo> getAllFilesBProjectId(Long id){
-        return this.fileRepository.findAllByProjectId(id);
+
+    public FileInfo getFileInfoByFilename(String filename){
+        return this.fileRepository.findFileInfoByFilename(filename);
     }
 
     @Transactional
     public void deleteAllByProjectId(Long id, TransferInfo transfer){
-        deleteProjectsFiles(this.fileRepository.findAllByProjectId(id),transfer);
-        fileRepository.deleteAllByProjectId(id);
+       // deleteProjectsFiles(this.fileRepository.findAllByProjectId(id),transfer);
     }
 
     private void deleteProjectsFiles(List<FileInfo> removeList, TransferInfo ti){

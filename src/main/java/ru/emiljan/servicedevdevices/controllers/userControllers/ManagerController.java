@@ -41,16 +41,16 @@ public class ManagerController {
     public String indexOrders(Model model, Principal user,
                               @RequestParam(value = "columns", required = false)
                                       List<String> columns, String keyword){
-        model.addAttribute("user",
-                userService.findUserByNickname(user.getName()));
+        final User currentUser = this.userService.findUserByNickname(user.getName());
+        model.addAttribute("user", currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         if(columns!=null){
             model.addAttribute("key", keyword);
             model.addAttribute("orders",
                     orderService.findOrdersByKeyword(columns, keyword));
             return "admin/index_orders";
         }
-        model.addAttribute("orders",
-                orderService.findAllOrders());
+        model.addAttribute("orders", orderService.findAllOrders());
         return "admin/index_orders";
     }
 
@@ -70,8 +70,9 @@ public class ManagerController {
     public String paymentsAll(Model model, @AuthenticationPrincipal UserDetails user,
                               @RequestParam(value = "columns", required = false)
                                       List<String> columns, String keyword){
-        model.addAttribute("user",
-                this.userService.findUserByNickname(user.getUsername()));
+        final User currentUser = this.userService.findUserByNickname(user.getUsername());
+        model.addAttribute("user", currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         if(columns!=null){
             model.addAttribute("key",keyword);
             model.addAttribute("history",
@@ -84,13 +85,16 @@ public class ManagerController {
 
     @GetMapping("/payments/{id}")
     public String viewPayments(@PathVariable("id") Long id, Model model,
-                                @AuthenticationPrincipal UserDetails moder){
-        User user = this.userService.findById(id);
-        if(user==null){
+                                @AuthenticationPrincipal UserDetails currentUser){
+        final User checkoutUser = this.userService.findById(id);
+        if(checkoutUser==null){
             return null;
         }
-        model.addAttribute("user", this.userService.findUserByNickname(moder.getUsername()));
-        model.addAttribute("history", this.paymentRepository.findPaymentsByUserId(user.getId()));
+        final User user = this.userService.findUserByNickname(currentUser.getUsername());
+        model.addAttribute("user", user);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(user));
+        model.addAttribute("history",
+                this.paymentRepository.findPaymentsByUserId(checkoutUser.getId()));
         return "payment/payment_list";
     }
 

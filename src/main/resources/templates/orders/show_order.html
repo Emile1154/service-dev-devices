@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:custom="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta th:name="_csrf" th:content="${_csrf.token}"/>
@@ -7,7 +7,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
     <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cc395f8268.js" crossorigin="anonymous"></script>
+    <title th:inline="text">Заказ #[[${order.getId()}]]</title>
 </head>
 <body>
     <div id="vk_api_transport"></div>
@@ -28,39 +30,79 @@
     </script>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
+            <div id="nav" class="container text-center">
                 <ul class="menu">
                     <li id="menu_item1-"><a href="/developing">Разработка</a></li>
-                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
-                    <li id="menu_item6"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
+                    <li id="menu_item6-">
+                        <a th:href="@{/users/notify}">
+                            <i class="fas fa-solid fa-bell fa-lg"></i>
+                            <span th:if="${alarm}" class="dot"></span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div class="content">
-            <div class="customer">
-                <a th:href="@{/users/{id}(id=${customer.getId()})}">CUSTOMER</a>
-            </div>
-            <div class="title">
-                <div th:text="${order.getTitle()}">TITLE_INFO</div>
-            </div>
-            <div class="description">
-                <div th:text="${order.getDescription()}">TITLE_INFO</div>
-            </div>
-            <div class="download-button">
-                <form method="get" th:action="@{/orders/download/{id}(id=${order.getId()})}">
-                    <button type="submit">Скачать файл</button>
-                </form>
-            </div>
-            <div class="error-message" th:text="${error}"></div>
-            <div th:if="${order.getOrderStatus().name().equals('ACCEPTED')} AND ${user.getId()}==${customer.getId()}">
-                <div th:text="'К оплате ' + ${order.getPrice()}"></div>
-                <form th:action="@{/payment/pay/current-order/{id}(id=${order.getId()})}" th:method="post">
-                    <button type="submit">Purchase with PayPal</button>
-                </form>
-                <button id="payment" type="submit">Purchase with VK</button>
+        <div class="container w-75 p-3">
+            <div class="mx-auto card" style="width: 700px;">
+                <div class="card-body">
+                    <div class="card-title d-flex justify-content-between">
+                        <a th:href="@{/users/{id}(id=${customer.getId()})}">
+                            <img class="p-2 bd-highlight" th:src="@{/image/{id}(id=${customer.getImage().getId()})}" width="70px">
+                        </a>
+                        <div class="p-2 text-muted" th:inline="text">[[${#temporals.format(order.getCreated(),'dd.MM.yyyy')}]]</div>
+                    </div>
+                    <h6 class="card-subtitle mb-2" th:inline="text">
+                        [[${order.getTitle()}]]
+                    </h6>
+                    <p class="card-text mb-2" th:inline="text">
+                        [[${order.getDescription()}]]
+                    </p>
+                    <div class="progress-block p-3">
+                        <div class="progress">
+                            <div class="one-order primary-color"></div><div class="two-order no-color"></div><div class="three-order no-color"></div>
+                            <div th:if="${process}>24" class="progress-bar progress-bar-striped  progress-bar-animated bg-success"  role="progressbar" style="width: 25%;"  aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div th:if="${process}>49" class="progress-bar progress-bar-striped  progress-bar-animated bg-success"  role="progressbar" style="width: 25%;"  aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div th:if="${process}>74" class="progress-bar progress-bar-striped  progress-bar-animated bg-success"  role="progressbar" style="width: 25%;"  aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div th:if="${process}>99" class="progress-bar progress-bar-striped  progress-bar-animated bg-success"  role="progressbar" style="width: 25%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div th:if="${process}==0" class="progress-bar progress-bar-striped  progress-bar-animated bg-success"  role="progressbar" style="width: 0%;"  aria-valuenow="0}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <h6><span th:if="${process}>24" class="badge bg-pill bg-success">Проверка заказа</span></h6>
+                            <h6><span th:if="${process}>49" class="badge bg-pill bg-success">Заказ принят</span></h6>
+                            <h6><span th:if="${process}>74" class="badge bg-pill bg-success">Разработка в процессе</span></h6>
+                            <h6><span th:if="${process}>99" class="badge bg-pill bg-success">Заказ завершён</span></h6>
+                            <h6><span th:if="${process}<24" class="badge bg-pill bg-secondary">Проверка заказа</span></h6>
+                            <h6><span th:if="${process}<49" class="badge bg-pill bg-secondary">Заказ принят</span></h6>
+                            <h6><span th:if="${process}<74" class="badge bg-pill bg-secondary">Разработка в процессе</span></h6>
+                            <h6><span th:if="${process}<99" class="badge bg-pill bg-secondary">Заказ завершён</span></h6>
+                        </div>
+                        <div th:if="${process}==0">
+                            <h5><span class="badge bg-pill bg-danger">Заказ отменён</span></h5>
+                        </div>
+                    </div>
+                    <div th:if="${error}!=null" role="alert" class="alert alert-danger" th:text="${error}"></div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <form method="get" th:action="@{/orders/download/{id}(id=${order.getId()})}">
+                            <button class="btn btn-secondary p-2 b2-highlight" type="submit">
+                                <i class="fas fa-file-download fa-2xl"></i>
+                                Скачать
+                            </button>
+                        </form>
+                        <div th:if="${process}==50 AND ${user.getId()}==${customer.getId()} OR ${process}==100 AND ${user.getId()}==${customer.getId()}">
+                            <div th:text="'К оплате ' + ${order.getPrice()}+'₽.'"></div>
+                            <a th:href="@{/payment/pay/current-order/{id}(id=${order.getId()})}" custom:linkMethod="post">
+                                <i class="fab fa-cc-paypal fa-2xl"></i>
+                            </a>
+                            <a id="payment" href="#">
+                                <i class="fab fa-vk fa-2xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -75,5 +117,7 @@
         var header = $("meta[name='_csrf_header']").attr("content");
         /*]]>*/
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

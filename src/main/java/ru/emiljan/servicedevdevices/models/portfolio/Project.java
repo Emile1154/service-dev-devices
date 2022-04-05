@@ -42,7 +42,10 @@ public class Project {
     @OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinTable(name="project_files", joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
     private List<FileInfo> fileList;
 
     @Column(name = "preview_id")

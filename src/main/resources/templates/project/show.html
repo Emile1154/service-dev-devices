@@ -10,29 +10,30 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
-                <div class="container">
-                    <div class="text-center">
-                        <div sec:authorize="isAnonymous()">
-                            <ul class="menu">
-                                <li id="menu_item1"><a href="/developing">Разработка</a></li>
-                                <li id="menu_item2"><a href="/portfolio">Портфолио</a></li>
-                                <li id="menu_item3"><a href="/about">О нас</a></li>
-                                <li id="menu_item4"><a href="/contacts">Контакты</a></li>
-                                <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
-                            </ul>
-                        </div>
-                        <div sec:authorize="isAuthenticated()">
-                            <ul class="menu">
-                                <li id="menu_item1-"><a href="/developing">Разработка</a></li>
-                                <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
-                                <li id="menu_item3-"><a href="/about">О нас</a></li>
-                                <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
-                                <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
-                                <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="12"></a></li>
-                            </ul>
-                        </div>
-                    </div>
+            <div id="nav" class="container text-center">
+                <div sec:authorize="isAnonymous()">
+                    <ul class="menu">
+                        <li id="menu_item1"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2"><a href="/portfolio">Портфолио</a></li>
+                        <li id="menu_item3"><a href="/about">О нас</a></li>
+                        <li id="menu_item4"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5"><a href="/users/login">Вход/Регистрация</a></li>
+                    </ul>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <ul class="menu">
+                        <li id="menu_item1-"><a href="/developing">Разработка</a></li>
+                        <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
+                        <li id="menu_item3-"><a href="/about">О нас</a></li>
+                        <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
+                        <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
+                        <li id="menu_item6-">
+                            <a th:href="@{/users/notify}">
+                                <i class="fas fa-solid fa-bell fa-lg"></i>
+                                <span th:if="${alarm}" class="dot"></span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -46,8 +47,8 @@
                     <div class="project-info-media">
                         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <div th:each="file, iterstat : ${files}" th:class="${iterstat.index}== 0  ? 'carousel-item':'carousel-item active'">
-                                    <img th:src="@{/portfolio/image/{id}(id=${file.getId()})}" width="300px" class="d-block w-100">
+                                <div th:each="file, iterstat : ${files}" th:class="${iterstat.index}!= 0  ? 'carousel-item':'carousel-item active'">
+                                    <img th:src="@{/portfolio/image/{id}(id=${file.getId()})}" class="d-block w-100">
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -82,7 +83,8 @@
                                             <div class="card-body row">
                                                 <textarea type="text" th:field="*{message}" cols="60"></textarea>
                                                 <div style="color:red" th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="validation-message">MESSAGE_ERROR</div>
-                                                <button class="btn btn-primary">
+                                                <button class="btn btn-dark">
+                                                    Отправить
                                                     <i class="far fa-regular fa-comment"></i>
                                                 </button>
                                             </div>
@@ -91,66 +93,112 @@
                                     <div sec:authorize="isAnonymous()">
                                         <div class="card-body">
                                             <form th:action="@{/users/login}">
-                                                <input class="btn btn-primary" type="submit" value="Войдите в аккаунт чтобы оставить комментарий">
+                                                <input class="btn btn-secondary" type="submit" value="Войдите в аккаунт чтобы оставить комментарий">
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <h3>Комментарии:</h3>
                         </div>
                     </div>
                 </div>
             </div>
+            <h3>Комментарии:</h3>
             <div th:each="comment : ${comments}">
                 <div class="list-group">
                     <a th:href="@{/users/{id}(id=${comment.getUser().getId()})}" class="list-group-item list-group-item-action" aria-current="true">
-                        <img th:src="@{/image/{id}(id=${comment.getUser().getImage().getId()})}" width="70px">
-                        <div class="star-wrapper">
-                            <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>0">
-                            <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>1">
-                            <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>2">
-                            <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>3">
-                            <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>4">
-                        </div>
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1" th:text="${comment.getUser().getNickname()}">NICKNAME</h5>
-                            <small class="text-muted">
+                        <div class="d-flex justify-content-between">
+                            <img class="p-2 bd-highlight" th:src="@{/image/{id}(id=${comment.getUser().getImage().getId()})}" width="70px">
+                            <div class="p-2 bd-highlight star-wrapper">
+                                <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>0" disabled>
+                                <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>1" disabled>
+                                <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>2" disabled>
+                                <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>3" disabled>
+                                <input class="star-item" type="checkbox" th:checked="${comment.getMark()}>4" disabled>
+                            </div>
+                            <small class="ml-auto p-2 bd-highlight text-muted">
                                 <div th:text="${#temporals.format(comment.getCreated(),'dd.MM.yyyy')}">CREATED</div>
                             </small>
                         </div>
-                        <p class="mb-1" th:text="${comment.getMessage()}">COMMENT_MESSAGE</p>
-                        <div class="d-flex justify-content-start">
-                            <div sec:authorize="isAuthenticated()">
-                                <div th:if="${comment.getUser().getId()}==${currentUser.getId()} OR ${vip}">
+                        <h5 class="ml-1 text-primary" th:text="${comment.getUser().getNickname()}">NICKNAME</h5>
+                        <p class="mу-3" th:text="${comment.getMessage()}">COMMENT_MESSAGE</p>
+                        <div sec:authorize="isAuthenticated()">
+                            <div th:if="${comment.getUser().getId()}==${currentUser.getId()} OR ${vip}">
+                                <div class="d-flex justify-content-between">
                                     <form th:action="@{/comment/delete/{id}(id=${comment.getId()})}" th:method="post">
                                         <input type="hidden" name="_method" value="delete">
-                                        <button class="btn btn-primary">
+                                        <button class="btn btn-warning p-2 bd-highlight">
                                             <i class="fas fa-thin fa-trash-can"></i>
                                         </button>
+                                    </form>
+                                    <form th:action="@{/comment/like/{id}(id=${comment.getId()})}" th:method="get">
+                                        <div th:if="${comment.isMeLiked()}">
+                                            <button class="btn btn-danger p-2 bd-highlight">
+                                                <div th:inline="text">
+                                                    [[${comment.getLikes()}]]
+                                                    <i class="fas fa-solid fa-heart"></i>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        <div th:if="${!comment.isMeLiked()}">
+                                            <button class="btn btn-dark p-2 bd-highlight">
+                                                <div th:inline="text">
+                                                    [[${comment.getLikes()}]]
+                                                    <i class="far fa-thin fa-heart"></i>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div th:if="${!vip}">
+                                <div class="d-flex justify-content-end">
+                                    <form th:action="@{/comment/like/{id}(id=${comment.getId()})}" th:method="get">
+                                        <div th:if="${comment.isMeLiked()}">
+                                            <button class="btn btn-danger p-2 bd-highlight">
+                                                <div th:inline="text">
+                                                    [[${comment.getLikes()}]]
+                                                    <i class="fas fa-solid fa-heart"></i>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        <div th:if="${!comment.isMeLiked()}">
+                                            <button class="btn btn-dark p-2 bd-highlight">
+                                                <div th:inline="text">
+                                                    [[${comment.getLikes()}]]
+                                                    <i class="far fa-thin fa-heart"></i>
+                                                </div>
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-row-reverse">
-                            <form th:action="@{/comment/like/{id}(id=${comment.getId()})}" th:method="get">
-                                <div th:if="${comment.isMeLiked()}">
-                                    <button class="btn btn-primary">
-                                        <i class="fas fa-solid fa-heart"></i>
-                                    </button>
-                                </div>
-                                <div th:if="${!comment.isMeLiked()}">
-                                    <button class="btn btn-primary">
-                                        <i class="far fa-thin fa-heart"></i>
-                                    </button>
-                                </div>
-                            </form>
-                            <h5 th:text="${comment.getLikes()}">COMMENT_LIKE_COUNT</h5>
+                        <div sec:authorize="isAnonymous()">
+                            <div class="d-flex justify-content-end">
+                                <form th:action="@{/comment/like/{id}(id=${comment.getId()})}" th:method="get">
+                                    <div th:if="${comment.isMeLiked()}">
+                                        <button class="btn btn-danger p-2 bd-highlight">
+                                            <div th:inline="text">
+                                                [[${comment.getLikes()}]]
+                                                <i class="fas fa-solid fa-heart"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div th:if="${!comment.isMeLiked()}">
+                                        <button class="btn btn-dark p-2 bd-highlight">
+                                            <div th:inline="text">
+                                                [[${comment.getLikes()}]]
+                                                <i class="far fa-thin fa-heart"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </a>
                 </div>
             </div>
-        </div>
         </div>
         <div class="footer">
 

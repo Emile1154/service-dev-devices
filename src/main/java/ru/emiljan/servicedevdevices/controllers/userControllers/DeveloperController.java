@@ -32,8 +32,11 @@ public class DeveloperController {
         if(checkoutUser == null){
             return null; // user not found add
         }
-        model.addAttribute("user", this.userService.findUserByNickname(user.getUsername()));
+        final User currentUser = this.userService.findUserByNickname(user.getUsername());
+
+        model.addAttribute("user", currentUser);
         model.addAttribute("orders", this.orderService.findOrdersByUserId(id));
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         return "orders/orders_list";
     }
 }

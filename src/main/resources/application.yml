@@ -14,7 +14,7 @@ spring:
 
   datasource:
     url: jdbc:mysql://localhost:3306/spring_db
-    username: admin
+    username:
     password:
     tomcat:
       validation-query: SELECT 1
@@ -23,7 +23,7 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: yandex@yandex.ru
+    username:
     password:
     protocol: smtps
   sql:
@@ -55,12 +55,12 @@ notifies:
       message: Ваш аккаунт успешно активирован!
     buy:
       title: Оплата прошла успешно!
-      message: Посмотреть чек оплаты можно здесь':' %s
+      message: Посмотреть чек оплаты можно здесь - %s
     info:
       title: Ваш статус заявки изменён!
-      message: Перейдите по ссылке':' %s для того, чтобы узнать подробней.
+      message: Перейдите по ссылке - %s для того, чтобы узнать подробней.
     order:
       title: Вы успешно создали заказ!
-      message: Ваш заказ сейчас на расмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.
+      message: Ваш заказ сейчас на рассмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.
 server:
   port: 9000

@@ -37,7 +37,9 @@ public class AdminController {
     public String index(Model model, Principal user,
                         @RequestParam(value = "columns", required = false)
                                 List<String> columns,String keyword){
-        model.addAttribute("user", userService.findUserByNickname(user.getName()));
+        final User currentUser = this.userService.findUserByNickname(user.getName());
+        model.addAttribute("user", currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         model.addAttribute("key", keyword);
         if(columns!=null){
             model.addAttribute("users", userService.getUsersByKeyword(columns, keyword));
@@ -75,8 +77,9 @@ public class AdminController {
 
     @GetMapping
     public String adminPanel(Model model, Principal user){
-        model.addAttribute("user",
-                userService.findUserByNickname(user.getName()));
+        final User currentUser = this.userService.findUserByNickname(user.getName());
+        model.addAttribute("user",currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         return "admin/admin_menu";
     }
 

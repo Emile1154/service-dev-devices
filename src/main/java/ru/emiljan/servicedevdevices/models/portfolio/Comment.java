@@ -2,7 +2,6 @@ package ru.emiljan.servicedevdevices.models.portfolio;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 import ru.emiljan.servicedevdevices.models.User;
 

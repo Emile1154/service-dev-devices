@@ -1,6 +1,8 @@
 package ru.emiljan.servicedevdevices.services.project;
 
+import lombok.SneakyThrows;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -11,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.models.dto.CommentDTO;
+import ru.emiljan.servicedevdevices.models.dto.ProjectDTO;
 import ru.emiljan.servicedevdevices.models.order.FileInfo;
 import ru.emiljan.servicedevdevices.models.order.TransferInfo;
-import ru.emiljan.servicedevdevices.models.portfolio.Comment;
 import ru.emiljan.servicedevdevices.models.portfolio.Project;
 import ru.emiljan.servicedevdevices.repositories.projectRepo.CommentRepository;
 import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
@@ -23,8 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author EM1LJAN
@@ -57,6 +59,10 @@ public class ProjectService {
         return this.projectRepository.findAll();
     }
 
+    public ProjectDTO getDTOById(Long id){
+        return this.projectRepository.getDTOById(id);
+    }
+
     public Project getProjectById(Long id){
         return this.projectRepository.getById(id);
     }
@@ -66,11 +72,45 @@ public class ProjectService {
         this.projectRepository.save(project);
     }
 
+    public Map<Integer,List<?>> checksToCompare(List<MultipartFile> uploadFiles) throws IOException {
+        File[] files =  new File(transferInfo.getPath()).listFiles();
+        if (files == null){
+            return null;
+        }
+        Map<Integer,List<?>> result = new HashMap<>();
+        List<File> loaded = new ArrayList<>();
+        List<MultipartFile> copy = new ArrayList<>(uploadFiles);
+        for (MultipartFile uf : uploadFiles){
+            for(File f : files){
+                if(f.length() == uf.getSize()){
+                    if(FileCompare.compare(f, FileCompare.multipartFileToFile(uf,transferInfo.getPath()))){
+                        copy.remove(uf);
+                        loaded.add(f);
+                    }
+                }
+            }
+        }
+        result.put(1, copy); // need load (Multipart format)
+        result.put(2, loaded);  // has been loaded
+        return result;
+    }
+
     @Transactional
     public List<FileInfo> upload(List<MultipartFile> files) throws IOException {
+        //add checks to compare files, if files is equals -> get fileName -> find JPA fileInfo by filename; else -> add new files
         List<FileInfo> result = new ArrayList<>();
         if(files.stream().anyMatch(file -> file.getSize()==0)){
             throw new FileUploadException("Файл не загружен");
+        }
+        Map<Integer,List<?>> map = checksToCompare(files);
+        if(map != null){
+            files = (List<MultipartFile>) map.get(1);
+            List<File> fileList = (List<File>) map.get(2);
+            if(!fileList.isEmpty()) {
+                for (File file : fileList) {
+                    result.add(this.fileService.getFileInfoByFilename(file.getName()));
+                }
+            }
         }
         for(MultipartFile file : files){
             FileInfo f = this.uploadBuilder.uploadFile(file,transferInfo);
@@ -81,17 +121,19 @@ public class ProjectService {
     }
 
     public List<FileInfo> getAllFilesByProjectId(Long id){
-        return fileService.getAllFilesBProjectId(id);
+        return this.projectRepository.getAllFiles(id);
     }
 
     @Transactional
-    public void saveAllFileInfo(List<FileInfo> list){
-        list.forEach(fileService::save);
+    public void update(Project project){
+        this.projectRepository.update(project.getId(),
+                                    project.getTitle(),
+                                    project.getDescription(),
+                                    project.getFileList());
     }
 
     @Transactional
     public void deleteById(Long id){
-        fileService.deleteAllByProjectId(id, transferInfo);
         projectRepository.deleteById(id);
     }
 

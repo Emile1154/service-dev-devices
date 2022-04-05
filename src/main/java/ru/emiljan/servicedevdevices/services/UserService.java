@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.Notify;
 import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.ImageRepository;
@@ -46,6 +47,10 @@ public class UserService {
 
     public User findUserByNickname(String nickname) {
         return userRepository.findByNickname(nickname);
+    }
+
+    public boolean checkNewNotifies(User user){
+       return this.userRepository.checkNotifies(user);
     }
 
 

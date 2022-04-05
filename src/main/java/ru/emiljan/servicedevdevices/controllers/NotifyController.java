@@ -31,18 +31,23 @@ public class NotifyController {
     @GetMapping
     public String index(@AuthenticationPrincipal UserDetails user,
                         Model model){
-        User currentUser = this.userService.findUserByNickname(user.getUsername());
+        final User currentUser = this.userService.findUserByNickname(user.getUsername());
         List<Notify> notifies = notifyService.findAllByUser(currentUser);
         model.addAttribute("notifies", notifies);
+        model.addAttribute("alarm", this.userService.checkNewNotifies(currentUser));
         model.addAttribute("user", currentUser);
         return "notify/notify";
     }
 
     @GetMapping("/show/{id}")
-    public String show(@PathVariable("id") Long id, Model model){
+    public String show(@PathVariable("id") Long id, Model model,
+                       @AuthenticationPrincipal UserDetails user){
         Notify notify = this.notifyService.findById(id);
         model.addAttribute("notify", notify);
         notifyService.updateNotify(notify);
+        model.addAttribute("alarm",
+                this.userService.checkNewNotifies(
+                        this.userService.findUserByNickname(user.getUsername())));
         return "notify/show";
     }
 

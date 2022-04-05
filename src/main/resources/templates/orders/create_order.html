@@ -3,55 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cc395f8268.js" crossorigin="anonymous"></script>
     <title>Создание нового заказа</title>
 </head>
 <body>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
+            <div id="nav" class="container text-center">
                 <ul class="menu">
                     <li id="menu_item1-"><a href="/developing">Разработка</a></li>
                     <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
-                    <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
+                    <li id="menu_item6-">
+                        <a th:href="@{/users/notify}">
+                            <i class="fas fa-solid fa-bell fa-lg"></i>
+                            <span th:if="${alarm}" class="dot"></span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div class="content">
-            <form th:method="post" th:action="@{/orders}" th:object="${order}" enctype="multipart/form-data">
-                <input type="text" th:field="*{title}" id="title" placeholder="Наименнование проекта">
-                <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="validation-message">TITLE_ERROR</div>
-                <br/>
-                <label for="description">Enter description</label>
-                <textarea th:field="*{description}" id="description" cols="60" rows="10" placeholder="Опишите вашу идею"></textarea>
-                <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="validation-message">DESCRIPTION_ERROR</div>
-                <br/>
-                <div th:if="${select}!=null">
-                    <input type="radio" name="design" id="electronic" th:checked="${select.equals('ONLY_ELECTRONIC')}" value="ONLY_ELECTRONIC"><label for="electronic">Разработка электроники</label>
-                    <br/>
-                    <input type="radio" name="design" id="program" th:checked="${select.equals('ONLY_APP')}" value="ONLY_APP"><label for="program">Разработка ПО</label>
-                    <br/>
-                    <input type="radio" name="design" id="complex" th:checked="${select.equals('COMPLEX')}" value="COMPLEX"><label for="complex">Комплексная разработка</label>
-                    <br/>
+        <div class="container w-75 p-3">
+            <div class="mx-auto card" style="width: 600px;">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <span class="badge bg-pill bg-success">Заполните форму заказа</span>
+                    </h5>
+                    <form th:method="post" th:action="@{/orders}" th:object="${order}" enctype="multipart/form-data">
+                        <div class="my-3 card-subtitle">
+                            <input class="form-control form-control-lg" type="text" th:field="*{title}" id="title" placeholder="Наименнование проекта">
+                            <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" role="alert" class="alert alert-danger">TITLE_ERROR</div>
+                        </div>
+                        <div class="my-3 card-text">
+                            <textarea class="form-control form-control-lg" th:field="*{description}" id="description" cols="55" rows="15" placeholder="Опишите вашу идею"></textarea>
+                            <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}" role="alert" class="alert alert-danger">DESCRIPTION_ERROR</div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div th:if="${select}!=null">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="electronic" th:checked="${select.equals('ONLY_ELECTRONIC')}" value="ONLY_ELECTRONIC">
+                                    <label class="form-check-label" for="electronic">Разработка электроники</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="program" th:checked="${select.equals('ONLY_APP')}" value="ONLY_APP">
+                                    <label class="form-check-label" for="program">Разработка ПО</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="complex" th:checked="${select.equals('COMPLEX')}" value="COMPLEX">
+                                    <label class="form-check-label" for="complex">Комплексная разработка</label>
+                                </div>
+                            </div>
+                            <div th:if="${select}==null">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="electronic2" checked value="ONLY_ELECTRONIC">
+                                    <label class="form-check-label" for="electronic2">Разработка электроники</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="program2"  value="ONLY_APP">
+                                    <label class="form-check-label" for="program2">Разработка ПО</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="design" id="complex2"  value="COMPLEX">
+                                    <label class="form-check-label" for="complex2">Комплексная разработка</label>
+                                </div>
+                            </div>
+                            <span class="p-3 ">
+                                <a th:href="@{/orders/download/sample}">
+                                    <i class="fas fa-file-download fa-2xl"></i>
+                                    <span class="text-center">
+                                        Скачать шаблон
+                                    </span>
+                                </a>
+                            </span>
+                        </div>
+                        <input id="file-input" class="mt-3 form-control" type="file" th:value="${upload}" name="file"/>
+                        <label for="file-input" class="text-danger">Загрузите заполненный шаблон pdf/word</label>
+                        <div th:if="${error} != null" class="alert alert-danger" role="alert">
+                            <div style="color:red" th:text="${error}">SOME_ERROR</div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success p-1 bd-highlight">Создать заказ</button>
+                        </div>
+                    </form>
                 </div>
-                <div th:if="${select}==null">
-                    <input type="radio" name="design" id="electronic2" checked value="ONLY_ELECTRONIC"><label for="electronic2">Разработка электроники</label>
-                    <br/>
-                    <input type="radio" name="design" id="program2"  value="ONLY_APP"><label for="program2">Разработка ПО</label>
-                    <br/>
-                    <input type="radio" name="design" id="complex2"  value="COMPLEX"><label for="complex2">Комплексная разработка</label>
-                    <br/>
-                </div>
-                <input type="file" th:value="${upload}" name="file"/>
-                <div style="color:red" th:text="${error}">SOME_ERROR</div>
-                <input type="submit" value="Enter!"/>
-            </form>
+            </div>
         </div>
         <div class="footer">
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

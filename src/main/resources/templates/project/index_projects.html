@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:custom="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cc395f8268.js" crossorigin="anonymous"></script>
     <title>Портфолио</title>
 </head>
 <body>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
+            <div id="nav" class="container text-center">
                 <div sec:authorize="isAnonymous()">
                     <ul class="menu">
                         <li id="menu_item1"><a href="/developing">Разработка</a></li>
@@ -25,28 +28,63 @@
                         <li id="menu_item3-"><a href="/about">О нас</a></li>
                         <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                         <li id="menu_item5-"><a th:href="@{/users/{id}(id=${currentUser.getId()})}">Мой аккаунт</a></li>
-                        <li id="menu_item6-"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="12"></a></li>
+                        <li id="menu_item6-">
+                            <a th:href="@{/users/notify}">
+                                <i class="fas fa-solid fa-bell fa-lg"></i>
+                                <span th:if="${alarm}" class="dot"></span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="content">
-            <div sec:authorize="hasRole('ADMIN')">
-                <form th:action="@{/portfolio/new}" method="get">
-                    <button type="submit">Добавить проект</button>
-                </form>
+        <div class="container w-50 p-3">
+            <div class="d-flex justify-content-between">
+                <h4 class="p-1 bd-highlight"><span class="badge bg-dark">Наши проекты</span></h4>
+                <div sec:authorize="hasRole('ADMIN')">
+                    <form th:action="@{/portfolio/new}" method="get">
+                        <button type="submit" class="btn btn-warning p-1 bd-highlight">Добавить проект</button>
+                    </form>
+                </div>
             </div>
-            <h4>Projects</h4>
+            <br/>
             <div class="all-projects-grid">
                 <div th:if="${projects}!=null">
-                    <div th:each="project : ${projects}">
-                        <a th:href="@{/portfolio/{id}(id=${project.getId()})}">
-                            <img th:src="@{/portfolio/image/{id}(id=${project.getPreviewId()})}" width="200">
-                            <div th:text="${project.getTitle()}"></div>
-                        </a>
-                        <form th:action="@{/portfolio/delete/{id}(id=${project.getId()})}" th:method="post">
-                            <input type="submit" value="Remove">
-                        </form>
+                    <div th:each="project : ${projects}" >
+                        <div class="card-group">
+                            <div class="card row" style="width: 18rem;">
+                                <a th:href="@{/portfolio/{id}(id=${project.getId()})}">
+                                    <br/>
+                                    <img th:src="@{/portfolio/image/{id}(id=${project.getPreviewId()})}" class="card-img-top">
+                                    <div class="card-body">
+                                        <div class="card-title">
+                                            <h5 th:inline="text">[[${project.getTitle()}]]</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="card-footer d-flex justify-content-end">
+                                    <div sec:authorize="isAuthenticated()">
+                                        <div th:if="${vip}">
+                                            <div class="dropdown p-1 bd-highlight">
+                                                <button class="btn btn-outline-dark dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item" th:href="@{/portfolio/edit/{id}(id=${project.getId()})}">
+                                                        <p><i class="fas fa-edit"></i>Редактировать</p>
+                                                    </a>
+                                                    <form class="dropdown-item" th:action="@{/portfolio/delete/{id}(id=${project.getId()})}" th:method="post">
+                                                        <button type="submit" class="button-link">
+                                                            <p><i class="fas fa-trash-alt"></i>Удалить</p>
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted p-1 bd-highlight" th:text="${#temporals.format(project.getCreated(),'dd.MM.yyyy')}"></small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,5 +93,7 @@
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

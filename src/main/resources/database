@@ -68,9 +68,7 @@ ENGINE=InnoDB;
 CREATE TABLE files_info(
     id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     filename VARCHAR(50) NOT NULL,
-    content_type VARCHAR(100) NOT NULL,
-    project_id BIGINT,
-    FOREIGN KEY (project_id) REFERENCES projects(id)
+    content_type VARCHAR(100) NOT NULL
 )
 ENGINE=InnoDB;
 
@@ -93,12 +91,19 @@ CREATE TABLE users_likes(
 )
 ENGINE=InnoDB;
 
+-- Table project_files manytomany
+CREATE TABLE project_files(
+    project_id BIGINT REFERENCES projects(id),
+    file_id BIGINT REFERENCES files_info(id)
+)
+ENGINE=InnoDB;
+
 -- Table orders
 CREATE TABLE orders(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     file_id BIGINT NOT NULL,
-    title VARCHAR(100) NOT NULL UNIQUE ,
+    title VARCHAR(100) NOT NULL UNIQUE,
     description VARCHAR(255) NOT NULL,
     order_status VARCHAR(20) NOT NULL,
     design_type VARCHAR(30) NOT NULL,

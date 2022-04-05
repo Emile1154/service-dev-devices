@@ -7,6 +7,7 @@ import org.hibernate.annotations.NotFoundAction;
 import ru.emiljan.servicedevdevices.models.portfolio.Project;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,8 +27,8 @@ public class FileInfo {
     @Column(name = "content_type")
     private String contentType;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "project_id")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private Project project;
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinTable(name="project_files", joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private List<Project> projects;
 }

@@ -28,4 +28,10 @@ public interface UserRepository extends JpaRepository<User, Long>,
 
     @Query(value = "SELECT u FROM User u LEFT JOIN u.roles ur WHERE ur.id = :id")
     List<User> findAllByRoles(@Param("id") Long id);
+
+    @Query(value = "SELECT " +
+                   "SUM(CASE WHEN un.isRead = FALSE THEN 1 ELSE 0 END ) > 0 " +
+                   "FROM User u LEFT JOIN u.notifies un " +
+                   "WHERE u = :user")
+    boolean checkNotifies(@Param("user") User user);
 }

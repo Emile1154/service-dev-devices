@@ -99,6 +99,22 @@ public class OrderService {
         return fileInfo;
     }
 
+    public int getValueStatus(Status status){
+        if(Status.NEW == status){
+            return 25;
+        }
+        if(Status.ACCEPTED == status){
+            return 50;
+        }
+        if(Status.PAYED == status){
+            return 75;
+        }
+        if(Status.CLOSED == status){
+            return 100;
+        }
+        return 0;
+    }
+
 
     @Transactional
     public void update(CustomOrder order, Status status){
@@ -107,6 +123,7 @@ public class OrderService {
         }
         order.setOrderStatus(status);
         orderRepository.save(order);
+        notifyService.createNotify("info", order.getUser());
     }
 
     @Transactional

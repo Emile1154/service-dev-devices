@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.models.dto.ProjectDTO;
 import ru.emiljan.servicedevdevices.models.portfolio.Comment;
 import ru.emiljan.servicedevdevices.services.UserService;
 import ru.emiljan.servicedevdevices.services.project.CommentService;
@@ -34,12 +35,12 @@ public class CommentController {
     }
 
     @PostMapping("/create/project-id/{id}")
-    @Transactional
     public String addComment(@ModelAttribute("comment") @Valid Comment comment, BindingResult bindingResult,
                              @PathVariable("id") Long id, @AuthenticationPrincipal UserDetails user, Model model){
-        User commentator = this.userService.findUserByNickname(user.getUsername());
+        final User commentator = this.userService.findUserByNickname(user.getUsername());
+        final ProjectDTO project = this.projectService.getDTOById(id);
         model.addAttribute("currentUser", commentator);
-        model.addAttribute("project", this.projectService.getProjectById(id));
+        model.addAttribute("project", project);
         model.addAttribute("comments", this.projectService.getAllCommentsByProjectId(id, commentator));
         model.addAttribute("files",this.projectService.getAllFilesByProjectId(id));
         model.addAttribute("vip",false);

@@ -28,7 +28,7 @@ public class FileExceptionHandler {
             }
         }
         attributes.addFlashAttribute("error",ex.getMessage());
-        return "redirect:/orders/new";
+        return "redirect:"+params.get("link");
     }
 
     @ExceptionHandler(FileNotFoundException.class)

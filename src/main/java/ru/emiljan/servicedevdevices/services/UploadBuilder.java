@@ -13,6 +13,7 @@ import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.FileRepository;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.OrderRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,10 +39,7 @@ public class UploadBuilder {
     public FileInfo uploadFile(MultipartFile file, TransferInfo transferInfo) throws IOException {
         final String path = transferInfo.getPath();
         final String contentType = file.getContentType();
-        if(transferInfo.getAllowedTypes().stream().noneMatch(type->contentType.contains(type))){
-            String types = StringUtils.join(transferInfo.getAllowedTypes(),",");
-            throw new FileUploadException("Ошибка формата, поддерживаются только: " + types);
-        }
+        checkTypes(transferInfo,contentType);
         Path dir = Path.of(path);
         if(Files.notExists(dir)){
             Files.createDirectory(dir);
@@ -54,6 +52,27 @@ public class UploadBuilder {
                     .contentType(contentType)
                 .build();
     }
+
+    public FileInfo uploadFile(File file, TransferInfo transferInfo) throws IOException {
+        final String path = transferInfo.getPath();
+        final String contentType = Files.probeContentType(file.toPath());
+        checkTypes(transferInfo, contentType);
+        Path dir = Path.of(path);
+        if(Files.notExists(dir)){
+            Files.createDirectory(dir);
+        }
+        String filename = createFilename(transferInfo.getId())+getSuffixFile(file.getName());
+        Path absolutePath = Path.of(path + filename);
+        return null;
+    }
+
+    private void checkTypes(TransferInfo transferInfo, String contentType) throws FileUploadException {
+        if(transferInfo.getAllowedTypes().stream().noneMatch(type->contentType.contains(type))){
+            String types = StringUtils.join(transferInfo.getAllowedTypes(),",");
+            throw new FileUploadException("Ошибка формата, поддерживаются только: " + types);
+        }
+    }
+
     private String createFilename(int id){
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy"));
         if(id==1){
