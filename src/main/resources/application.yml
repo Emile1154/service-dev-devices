@@ -36,8 +36,6 @@ paypal:
   clientId:
   clientSecret:
 
-
-
 upload:
   project:
     path: C:/Users/HOME-PC/Desktop/project/projects/

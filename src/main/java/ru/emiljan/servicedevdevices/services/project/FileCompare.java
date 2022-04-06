@@ -6,6 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -26,7 +30,30 @@ public class FileCompare {
             MappedByteBuffer m1 = ch1.map(FileChannel.MapMode.READ_ONLY, 0L, size);
             MappedByteBuffer m2 = ch2.map(FileChannel.MapMode.READ_ONLY, 0L, size);
 
-            return m1.equals(m2);
+            ch1.close();
+            ch2.close();
+
+            boolean result = m1.equals(m2);
+
+            //closing MappedByteBuffer.class
+            closeByteBuffer(m1);
+            closeByteBuffer(m2);
+
+            return result;
+        }
+    }
+
+    private static void closeByteBuffer(MappedByteBuffer buffer){
+        try{
+            Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Object unsafe = unsafeField.get(null);
+            Method invokeCleaner = unsafeClass.getMethod("invokeCleaner", ByteBuffer.class);
+            invokeCleaner.invoke(unsafe, buffer);
+        }catch (NoSuchFieldException | ClassNotFoundException |
+                InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 

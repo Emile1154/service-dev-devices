@@ -26,7 +26,7 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     ProjectDTO getDTOById(@Param("id") Long id);
 
     @Query(value = "SELECT pf FROM Project p LEFT JOIN p.fileList pf WHERE p.id =:id")
-    List<FileInfo> getAllFiles(@Param("id") Long id);
+    List<FileInfo> getAllFilesByProjectId(@Param("id") Long id);
 
     @Modifying
     @Query(value = "UPDATE Project SET title=:title, description=:description, fileList=:files WHERE id=:id")

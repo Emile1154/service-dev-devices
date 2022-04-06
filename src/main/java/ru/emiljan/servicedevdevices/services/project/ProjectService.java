@@ -1,8 +1,6 @@
 package ru.emiljan.servicedevdevices.services.project;
 
-import lombok.SneakyThrows;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -21,12 +19,15 @@ import ru.emiljan.servicedevdevices.repositories.projectRepo.CommentRepository;
 import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
 import ru.emiljan.servicedevdevices.services.UploadBuilder;
 
+import javax.persistence.EntityManager;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author EM1LJAN
@@ -38,6 +39,9 @@ public class ProjectService {
     private final TransferInfo transferInfo;
     private final FileService fileService;
     private final CommentRepository commentRepository;
+
+    @Autowired
+    private EntityManager manager;
 
     @Autowired
     public ProjectService(ProjectRepository projectRepository,
@@ -121,7 +125,7 @@ public class ProjectService {
     }
 
     public List<FileInfo> getAllFilesByProjectId(Long id){
-        return this.projectRepository.getAllFiles(id);
+        return this.projectRepository.getAllFilesByProjectId(id);
     }
 
     @Transactional
@@ -134,12 +138,17 @@ public class ProjectService {
 
     @Transactional
     public void deleteById(Long id){
+        List<FileInfo> fileList = this.projectRepository.getAllFilesByProjectId(id);
         projectRepository.deleteById(id);
+        System.out.println(fileList.size());
+        List<FileInfo> removeList = this.fileService.getRemoveFileList(fileList);
+        if(!removeList.isEmpty()){
+            this.fileService.deleteProjectsFiles(removeList,transferInfo);
+        }
     }
 
-    @Transactional
     public ResponseEntity<?> drawImage(Long id) throws IOException {
-        FileInfo info = fileService.getFileInfoById(id);
+        FileInfo info = this.fileService.getFileInfoById(id);
         String filename = info.getFilename();
         MediaType mediaType = MediaType.valueOf(info.getContentType());
         File file = new File(transferInfo.getPath()+filename);
@@ -147,6 +156,4 @@ public class ProjectService {
                 .contentType(mediaType)
                 .body(new InputStreamResource(new ByteArrayInputStream(Files.readAllBytes(file.toPath()))));
     }
-
-
 }

@@ -9,7 +9,6 @@ import ru.emiljan.servicedevdevices.models.dto.CommentDTO;
 import ru.emiljan.servicedevdevices.models.portfolio.Comment;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
