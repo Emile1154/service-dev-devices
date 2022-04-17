@@ -3,25 +3,25 @@ package ru.emiljan.servicedevdevices.services.project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.models.portfolio.Comment;
 import ru.emiljan.servicedevdevices.models.portfolio.Project;
 import ru.emiljan.servicedevdevices.repositories.projectRepo.CommentRepository;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final ProjectService projectService ;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository,
-                          ProjectService projectService) {
+    public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
-        this.projectService = projectService;
     }
 
     @Transactional
-    public void save(Comment comment, Long projectId){
-        comment.setProject(this.projectService.getProjectById(projectId));
+    public void save(Comment comment){
         commentRepository.save(comment);
     }
 
@@ -41,5 +41,13 @@ public class CommentService {
 
     public Comment getById(Long id){
         return this.commentRepository.findById(id).orElse(null);
+    }
+
+    public Set<User> getAllCommentLikes(Comment comment){
+        Set<User> likes = this.commentRepository.getAllLikes(comment);
+        if(likes.iterator().next() == null){
+            likes = new HashSet<>();
+        }
+        return likes;
     }
 }

@@ -1,6 +1,7 @@
 package ru.emiljan.servicedevdevices.controllers.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -48,7 +49,8 @@ public class CommentController {
             return "project/show";
         }
         comment.setUser(commentator);
-        commentService.save(comment,id);
+        comment.setProject(this.projectService.getProjectById(id));
+        commentService.save(comment);
         return "redirect:/portfolio/"+id;
     }
 
@@ -73,12 +75,17 @@ public class CommentController {
         }
         User currentUser = this.userService.findUserByNickname(user.getUsername());
         Long _id = this.commentService.getProjectByCommentId(id).getId();
-        Set<User> likes = this.commentService.getById(id).getLikes();
-        if(likes.contains(currentUser)){
+        Comment comment = this.commentService.getById(id);
+        Set<User> likes = this.commentService.getAllCommentLikes(comment);
+
+        if(likes.stream().anyMatch(user1 -> user1.getId() == currentUser.getId())){
             likes.remove(currentUser);
-            return "redirect:/portfolio/"+_id;
         }
-        likes.add(currentUser);
+        else{
+            likes.add(currentUser);
+        }
+        comment.setLikes(likes);
+        this.commentService.save(comment);
         return "redirect:/portfolio/"+_id;
     }
 }

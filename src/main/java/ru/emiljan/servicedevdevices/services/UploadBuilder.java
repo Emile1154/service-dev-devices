@@ -53,19 +53,6 @@ public class UploadBuilder {
                 .build();
     }
 
-    public FileInfo uploadFile(File file, TransferInfo transferInfo) throws IOException {
-        final String path = transferInfo.getPath();
-        final String contentType = Files.probeContentType(file.toPath());
-        checkTypes(transferInfo, contentType);
-        Path dir = Path.of(path);
-        if(Files.notExists(dir)){
-            Files.createDirectory(dir);
-        }
-        String filename = createFilename(transferInfo.getId())+getSuffixFile(file.getName());
-        Path absolutePath = Path.of(path + filename);
-        return null;
-    }
-
     private void checkTypes(TransferInfo transferInfo, String contentType) throws FileUploadException {
         if(transferInfo.getAllowedTypes().stream().noneMatch(type->contentType.contains(type))){
             String types = StringUtils.join(transferInfo.getAllowedTypes(),",");

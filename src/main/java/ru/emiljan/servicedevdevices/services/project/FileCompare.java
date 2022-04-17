@@ -35,7 +35,7 @@ public class FileCompare {
 
             boolean result = m1.equals(m2);
 
-            //closing MappedByteBuffer.class
+            //closing MappedByteBuffers
             closeByteBuffer(m1);
             closeByteBuffer(m2);
 

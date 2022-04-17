@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.emiljan.servicedevdevices.models.Notify;
-import ru.emiljan.servicedevdevices.models.Role;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
@@ -53,7 +51,6 @@ public class UserService {
        return this.userRepository.checkNotifies(user);
     }
 
-
     private String formatPhone(String phoneNumber){
         if(phoneNumber.isEmpty()){
             return null;
@@ -66,7 +63,6 @@ public class UserService {
             BBB = phoneNumber.substring(4,7);
             CC = phoneNumber.substring(7,9);
             DD = phoneNumber.substring(9,11);
-
             return "+7"+"("+ AAA +")" + BBB + "-" + CC + "-" + DD;
         }
         // XXX XXX XX XX type
@@ -110,7 +106,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     public List<User> getUsersByKeyword(List<String> columns, String keyword){
         List<String> columns_bool = columns.stream()
                 .filter(s->s.startsWith("a")).collect(Collectors.toList());
@@ -151,6 +146,7 @@ public class UserService {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){
             user.setActive(true);
+            user.setActivateCode(null);
             notifyService.createNotify("welcome",user);
             return true;
         }

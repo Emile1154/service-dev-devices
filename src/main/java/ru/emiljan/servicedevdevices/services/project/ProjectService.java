@@ -41,9 +41,6 @@ public class ProjectService {
     private final CommentRepository commentRepository;
 
     @Autowired
-    private EntityManager manager;
-
-    @Autowired
     public ProjectService(ProjectRepository projectRepository,
                           UploadBuilder uploadBuilder,
                           @Qualifier("transferProject") TransferInfo transferInfo,
@@ -76,7 +73,7 @@ public class ProjectService {
         this.projectRepository.save(project);
     }
 
-    public Map<Integer,List<?>> checksToCompare(List<MultipartFile> uploadFiles) throws IOException {
+    private Map<Integer,List<?>> checksToCompare(List<MultipartFile> uploadFiles) throws IOException {
         File[] files =  new File(transferInfo.getPath()).listFiles();
         if (files == null){
             return null;
@@ -130,17 +127,19 @@ public class ProjectService {
 
     @Transactional
     public void update(Project project){
-        this.projectRepository.update(project.getId(),
+        this.projectRepository.update(this.projectRepository.getMaxId(),
                                     project.getTitle(),
-                                    project.getDescription(),
-                                    project.getFileList());
+                                    project.getDescription());
     }
 
     @Transactional
     public void deleteById(Long id){
         List<FileInfo> fileList = this.projectRepository.getAllFilesByProjectId(id);
         projectRepository.deleteById(id);
-        System.out.println(fileList.size());
+        checksToDelete(fileList);
+    }
+
+    private void checksToDelete(List<FileInfo> fileList){
         List<FileInfo> removeList = this.fileService.getRemoveFileList(fileList);
         if(!removeList.isEmpty()){
             this.fileService.deleteProjectsFiles(removeList,transferInfo);

@@ -52,7 +52,7 @@
                 <div th:if="${projects}!=null">
                     <div th:each="project : ${projects}" >
                         <div class="card-group">
-                            <div class="card row" style="width: 18rem;">
+                            <div class="card row m-3" style="width: 18rem;">
                                 <a th:href="@{/portfolio/{id}(id=${project.getId()})}">
                                     <br/>
                                     <img th:src="@{/portfolio/image/{id}(id=${project.getPreviewId()})}" class="card-img-top">
