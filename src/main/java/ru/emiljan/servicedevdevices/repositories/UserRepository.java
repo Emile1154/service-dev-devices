@@ -11,6 +11,7 @@ import ru.emiljan.servicedevdevices.models.User;
 import java.util.List;
 
 /**
+ *
  * @author EM1LJAN
  */
 @Repository

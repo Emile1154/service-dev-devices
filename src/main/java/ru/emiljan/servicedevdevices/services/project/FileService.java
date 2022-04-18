@@ -11,6 +11,11 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.order.FileInfo}
+ *
+ * @author EM1LJAN
+ */
 @Service
 public class FileService {
     private final FileRepository fileRepository;
@@ -28,6 +33,11 @@ public class FileService {
         return this.fileRepository.findFileInfoByFilename(filename);
     }
 
+    /**
+     * get files that can be deleted
+     * @param files project files {@link ru.emiljan.servicedevdevices.models.portfolio.Project}
+     * @return list of files that are no longer in use
+     */
     public List<FileInfo> getRemoveFileList(List<FileInfo> files){
         return files
                 .stream()
@@ -35,6 +45,11 @@ public class FileService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * delete files from storage and database
+     * @param removeList FileInfo list
+     * @param ti TransferInfo for get file place
+     */
     @Transactional
     public void deleteProjectsFiles(List<FileInfo> removeList, TransferInfo ti){
         removeList.forEach(fileInfo ->
@@ -45,6 +60,6 @@ public class FileService {
 
     @Transactional
     public void save(FileInfo fileInfo){
-        fileRepository.save(fileInfo);
+        this.fileRepository.save(fileInfo);
     }
 }

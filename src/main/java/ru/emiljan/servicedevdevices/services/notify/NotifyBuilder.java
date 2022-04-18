@@ -7,6 +7,11 @@ import ru.emiljan.servicedevdevices.models.Notify;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.MailSenderService;
 
+/**
+ * Builder for {@link ru.emiljan.servicedevdevices.models.Notify}
+ *
+ * @author EM1LJAN
+ */
 @Component
 public class NotifyBuilder {
     private final MailSenderService senderService;
@@ -20,6 +25,12 @@ public class NotifyBuilder {
         this.environment = environment;
     }
 
+    /**
+     * build new notify for user
+     * @param key notify key
+     * @param user recipient
+     * @return new notify
+     */
     public Notify buildNotify(String key, User user){
         String title = environment.getProperty(DEFAULT_PROP_KEY+key+".title");
         String msg = environment.getProperty(DEFAULT_PROP_KEY+key+".message");

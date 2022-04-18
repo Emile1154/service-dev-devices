@@ -15,8 +15,21 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * This class compare and convert files {@link org.springframework.web.multipart.MultipartFile}
+ *                                      {@link java.io.File}
+ *
+ * @author EM1LJAN
+ */
 @Component
 public class FileCompare {
+    /**
+     * method checks files for a match
+     * @param file1 first file
+     * @param file2 second file
+     * @return true - files equals, false - files are not equals
+     * @throws IOException
+     */
     public static boolean compare(File file1, File file2) throws IOException {
         try (RandomAccessFile randomAccessFile1 = new RandomAccessFile(file1, "r");
              RandomAccessFile randomAccessFile2 = new RandomAccessFile(file2, "r")) {
@@ -57,6 +70,14 @@ public class FileCompare {
         }
     }
 
+    /**
+     * this method convert MultipartFile {@link org.springframework.web.multipart.MultipartFile} -> File {@link java.io.File}
+     * for comparing files
+     * @param multipartFile convertible file
+     * @param dir file place
+     * @return tmp file
+     * @throws IOException
+     */
     public static File multipartFileToFile(MultipartFile multipartFile, String dir) throws IOException {
         Path templateFolder = Path.of(dir+"/Template");
         if(Files.notExists(templateFolder)){

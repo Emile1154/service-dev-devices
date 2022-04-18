@@ -22,10 +22,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+ *
  * @author EM1LJAN
  */
 @Service
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final NotifyService notifyService;
     private final TransferInfo transferInfo;
@@ -64,17 +67,32 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    /**
+     * this method filters orders by columns and keyword
+     * @param columns
+     * @param keyword
+     * @return list of orders matching the specification
+     */
     public List<CustomOrder> findOrdersByKeyword(List<String> columns, String keyword){
         return orderRepository.findAll(OrderSpecifications.findByKeyword(keyword, columns));
     }
 
+    /**
+     * Checks repeat order title
+     * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+     * @return false - title not busy, true - title busy
+     */
     public boolean checkTitle(CustomOrder order){
-        if(orderRepository.findOrderByTitle(order.getTitle()) == null){
+        if(this.orderRepository.findOrderByTitle(order.getTitle()) == null){
             return false;
         }
         return true;
     }
 
+    /**
+     * add new order to database
+     * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+     */
     @Transactional
     public void saveOrder(CustomOrder order){
         order.setOrderStatus(Status.NEW);
@@ -86,6 +104,12 @@ public class OrderService {
         return orderRepository.findOrderByUserId(id);
     }
 
+    /**
+     * upload file method
+     * @param file pdf/msdoc/vnd format file
+     * @return {@link ru.emiljan.servicedevdevices.models.order.FileInfo}
+     * @throws IOException
+     */
     @Transactional
     public FileInfo uploadFile(MultipartFile file) throws IOException {
         if(file.getSize() == 0){
@@ -99,6 +123,11 @@ public class OrderService {
         return fileInfo;
     }
 
+    /**
+     * for progress bootstrap method
+     * @param status {@link ru.emiljan.servicedevdevices.models.Status}
+     * @return Integer value [0-100]
+     */
     public int getValueStatus(Status status){
         if(Status.NEW == status){
             return 25;
@@ -116,6 +145,11 @@ public class OrderService {
     }
 
 
+    /**
+     * set order status method
+     * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+     * @param status {@link ru.emiljan.servicedevdevices.models.Status}
+     */
     @Transactional
     public void update(CustomOrder order, Status status){
         if(order==null){
@@ -126,6 +160,11 @@ public class OrderService {
         notifyService.createNotify("info", order.getUser());
     }
 
+    /**
+     * set order price method
+     * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+     * @param price price value
+     */
     @Transactional
     public void update(CustomOrder order, BigDecimal price) {
         if(order==null){

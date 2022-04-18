@@ -9,6 +9,7 @@ import ru.emiljan.servicedevdevices.models.Role;
 import java.util.Set;
 
 /**
+ *
  * @author EM1LJAN
  */
 @Repository

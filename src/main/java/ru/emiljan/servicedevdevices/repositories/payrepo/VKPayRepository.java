@@ -5,6 +5,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.emiljan.servicedevdevices.models.payment.VKPayPayment;
 
+/**
+ *
+ * @author EM1LJAN
+ */
 @Repository
 public interface VKPayRepository extends JpaRepository<VKPayPayment, Long> {
     @Query(value = "SELECT coalesce(max(id),0) FROM payments", nativeQuery = true)

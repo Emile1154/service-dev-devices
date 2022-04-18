@@ -6,6 +6,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.emiljan.servicedevdevices.models.order.FileInfo;
 
+/**
+ *
+ * @author EM1LJAN
+ */
 @Repository
 public interface FileRepository extends JpaRepository<FileInfo, Long> {
     @Query(value = "SELECT coalesce(max(id),0) FROM files_info", nativeQuery = true)

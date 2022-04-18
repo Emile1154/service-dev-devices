@@ -11,6 +11,11 @@ import ru.emiljan.servicedevdevices.repositories.projectRepo.CommentRepository;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.portfolio.Comment}
+ *
+ * @author EM1LJAN
+ */
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
@@ -30,7 +35,6 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
-
     public Project getProjectByCommentId(Long id){
         Comment comment = this.commentRepository.findById(id).orElse(null);
         if(comment == null){
@@ -43,6 +47,11 @@ public class CommentService {
         return this.commentRepository.findById(id).orElse(null);
     }
 
+    /**
+     * this method return users who liked this comment
+     * @param comment {@link ru.emiljan.servicedevdevices.models.portfolio.Comment}
+     * @return set users
+     */
     public Set<User> getAllCommentLikes(Comment comment){
         Set<User> likes = this.commentRepository.getAllLikes(comment);
         if(likes.iterator().next() == null){

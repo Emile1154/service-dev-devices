@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.Image}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -33,7 +35,12 @@ public class ImageService {
         this.userRepository = userRepository;
     }
 
-
+    /**
+     * set user avatar method
+     * @param image gif/jpg/png format image
+     * @param user {@link ru.emiljan.servicedevdevices.models.User}
+     * @throws IOException
+     */
     @Transactional
     public void load(MultipartFile image, User user) throws IOException {
         if(image.getSize() == 0){
@@ -59,7 +66,7 @@ public class ImageService {
     }
 
     public Image findImageById(Long id){
-        return imageRepository.findById(id).orElse(null);
+        return this.imageRepository.findById(id).orElse(null);
     }
 
 }

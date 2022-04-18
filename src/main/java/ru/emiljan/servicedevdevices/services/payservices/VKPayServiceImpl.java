@@ -21,6 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.payment.VKPayPayment}
+ * implementing {@link ru.emiljan.servicedevdevices.services.payservices.PaymentService}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -48,6 +51,12 @@ public class VKPayServiceImpl implements PaymentService {
         this.clientSecret = clientSecret;
     }
 
+    /**
+     * Create payment
+     * @param returnURI captureURI
+     * @param orderId
+     * @return VKPayPayment with params
+     */
     @Override
     public Payment createOrder(URI returnURI, Long orderId) {
         VKPayPayment vkPayPayment = new VKPayPayment();
@@ -105,9 +114,9 @@ public class VKPayServiceImpl implements PaymentService {
         String merchantSign = getMerchantSign(merchantData);
         return Data.builder()
                     .currency("RUB")
-                    .merchant_data(merchantData)  //json (order_id, ts, amount, currency).base64 + merchant.private_key DONE!
+                    .merchant_data(merchantData)  //json (order_id, ts, amount, currency).base64 + merchant.private_key
                     .merchant_params(returnUrl)
-                    .merchant_sign(merchantSign) //sha1 (merchant.data) DONE!
+                    .merchant_sign(merchantSign) //sha1 (merchant.data)
                     .order_id(String.valueOf(paymentId))
                     .ts(unixTime)
                 .build();
@@ -126,12 +135,19 @@ public class VKPayServiceImpl implements PaymentService {
                 .build();
     }
 
+
     @Override
     public boolean captureOrder(String orderId) {
         // return JSON pay session
         return false;
     }
 
+    /**
+     * add payment to database
+     * @param payment {@link ru.emiljan.servicedevdevices.models.payment.Payment}
+     * @param username User nickname
+     * @param orderId Order id
+     */
     @Override
     @Transactional
     public void save(Payment payment, String username, Long orderId) {
@@ -142,6 +158,10 @@ public class VKPayServiceImpl implements PaymentService {
         vkPayRepository.save(vkPayment);
     }
 
+    /**
+     * finish if payment captured
+     * @param id payment id
+     */
     @Override
     @Transactional
     public void update(String id) {

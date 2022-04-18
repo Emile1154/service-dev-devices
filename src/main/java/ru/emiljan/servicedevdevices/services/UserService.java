@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.User}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -51,6 +53,11 @@ public class UserService {
        return this.userRepository.checkNotifies(user);
     }
 
+    /**
+     * this method formats the phone number entered by the user to RU standart
+     * @param phoneNumber
+     * @return formatted phone number
+     */
     private String formatPhone(String phoneNumber){
         if(phoneNumber.isEmpty()){
             return null;
@@ -73,6 +80,12 @@ public class UserService {
         return "+7"+"("+ AAA +")" + BBB + "-" + CC + "-" + DD;
     }
 
+
+    /**
+     * this method checks if the entered data is busy: phone number, nickname and email
+     * @param user
+     * @return error map
+     */
     public Map<String, String> checkRepeats(User user){
         Map<String,String> errors = new HashMap<>();
         user.setPhone(formatPhone(user.getPhone()));
@@ -88,6 +101,10 @@ public class UserService {
         return errors;
     }
 
+    /**
+     * add new user to database
+     * @param user
+     */
     @Transactional
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -106,8 +123,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * this method filters users by columns and keyword
+     * @param columns
+     * @param keyword
+     * @return list of users matching the specification
+     */
     public List<User> getUsersByKeyword(List<String> columns, String keyword){
-        List<String> columns_bool = columns.stream()
+        List<String> columns_bool = columns.stream() //boolean columns name accountNonLocked and active.start with a
                 .filter(s->s.startsWith("a")).collect(Collectors.toList());
 
         columns.removeIf(columns_bool::contains);
@@ -132,16 +155,26 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    /**
+     * ban/unban method
+     * @param id user id
+     * @param param true - unban, false - ban
+     */
     @Transactional
     public void banUserById(Long id, boolean param){
-        userRepository.setLockById(id, param);
+        this.userRepository.setLockById(id, param);
     }
 
     @Transactional
     public void update(User user){
-        userRepository.save(user);
+        this.userRepository.save(user);
     }
 
+    /**
+     * this method activates the user account by email
+     * @param code
+     * @return true - activation success, false - activation failed
+     */
     public boolean activateUser(String code) {
         User user = userRepository.findUserByActivateCode(code);
         if(user != null){

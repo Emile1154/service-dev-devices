@@ -19,7 +19,6 @@ import ru.emiljan.servicedevdevices.repositories.projectRepo.CommentRepository;
 import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
 import ru.emiljan.servicedevdevices.services.UploadBuilder;
 
-import javax.persistence.EntityManager;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.portfolio.Project}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -73,6 +74,12 @@ public class ProjectService {
         this.projectRepository.save(project);
     }
 
+    /**
+     * the method checks if the transferred files have already been loaded before
+     * @param uploadFiles list of uploaded files pdf/png/jpg
+     * @return map with two list, 1 - need load, 2 - has been loaded
+     * @throws IOException
+     */
     private Map<Integer,List<?>> checksToCompare(List<MultipartFile> uploadFiles) throws IOException {
         File[] files =  new File(transferInfo.getPath()).listFiles();
         if (files == null){
@@ -96,6 +103,12 @@ public class ProjectService {
         return result;
     }
 
+    /**
+     * upload files method
+     * @param files pdf/png/jpg files format
+     * @return FileInfo list {@link ru.emiljan.servicedevdevices.models.order.FileInfo}
+     * @throws IOException
+     */
     @Transactional
     public List<FileInfo> upload(List<MultipartFile> files) throws IOException {
         //add checks to compare files, if files is equals -> get fileName -> find JPA fileInfo by filename; else -> add new files
@@ -125,6 +138,10 @@ public class ProjectService {
         return this.projectRepository.getAllFilesByProjectId(id);
     }
 
+    /**
+     * update project method
+     * @param project {@link ru.emiljan.servicedevdevices.models.portfolio.Project}
+     */
     @Transactional
     public void update(Project project){
         this.projectRepository.update(this.projectRepository.getMaxId(),
@@ -139,6 +156,10 @@ public class ProjectService {
         checksToDelete(fileList);
     }
 
+    /**
+     * deleting files if they are not in use
+     * @param fileList project files
+     */
     private void checksToDelete(List<FileInfo> fileList){
         List<FileInfo> removeList = this.fileService.getRemoveFileList(fileList);
         if(!removeList.isEmpty()){
@@ -146,6 +167,12 @@ public class ProjectService {
         }
     }
 
+    /**
+     * draw file by id
+     * @param id fileId
+     * @return {@link org.springframework.http.ResponseEntity}
+     * @throws IOException
+     */
     public ResponseEntity<?> drawImage(Long id) throws IOException {
         FileInfo info = this.fileService.getFileInfoById(id);
         String filename = info.getFilename();

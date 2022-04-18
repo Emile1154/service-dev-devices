@@ -10,6 +10,11 @@ import ru.emiljan.servicedevdevices.repositories.UserRepository;
 
 import java.util.List;
 
+/**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.Notify}
+ *
+ * @author EM1LJAN
+ */
 @Service
 public class NotifyService {
     private final NotifyRepository notifyRepository;
@@ -25,6 +30,11 @@ public class NotifyService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * create new notify method
+     * @param key value notify
+     * @param user {@link ru.emiljan.servicedevdevices.models.User}
+     */
     @Transactional
     public void createNotify(String key, User user){
         Notify notify = this.notifyBuilder.buildNotify(key, user);
@@ -32,6 +42,10 @@ public class NotifyService {
         userRepository.save(user);
     }
 
+    /**
+     * read notification
+     * @param notify {@link ru.emiljan.servicedevdevices.models.Notify}
+     */
     @Transactional
     public void updateNotify(Notify notify){
         notify.setRead(true);

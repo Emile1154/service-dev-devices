@@ -5,6 +5,7 @@ import ru.emiljan.servicedevdevices.models.payment.Payment;
 import java.net.URI;
 
 /**
+ *
  * @author EM1LJAN
  */
 public interface PaymentService {

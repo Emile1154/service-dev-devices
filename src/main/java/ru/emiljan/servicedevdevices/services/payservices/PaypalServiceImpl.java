@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
+ * Service class for {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -51,6 +53,12 @@ public class PaypalServiceImpl implements PaymentService {
         this.notifyService = notifyService;
     }
 
+    /**
+     * Create payment
+     * @param returnURI captureURI
+     * @param order_id
+     * @return PayPal payment
+     */
     @Override
     @SneakyThrows
     public Payment createOrder(URI returnURI, Long order_id) {
@@ -99,6 +107,11 @@ public class PaypalServiceImpl implements PaymentService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
+    /**
+     * capture payment
+     * @param token
+     * @return true - payment success, false - payment failed
+     */
     @Override
     public boolean captureOrder(String token) {
         final OrdersCaptureRequest request = new OrdersCaptureRequest(token);
@@ -111,6 +124,12 @@ public class PaypalServiceImpl implements PaymentService {
         }
     }
 
+    /**
+     * add payment to database
+     * @param payment {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+     * @param username user nickname
+     * @param orderId order id
+     */
     @Override
     @Transactional
     public void save(Payment payment, String username, Long orderId) {
@@ -126,6 +145,10 @@ public class PaypalServiceImpl implements PaymentService {
         paypalRepository.save((PaypalPayment) payment);
     }
 
+    /**
+     * finish if payment captured
+     * @param token
+     */
     @Override
     @Transactional
     public void update(String token) {

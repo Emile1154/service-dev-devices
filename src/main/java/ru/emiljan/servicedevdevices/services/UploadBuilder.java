@@ -21,6 +21,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * Upload files class for {@link ru.emiljan.servicedevdevices.models.portfolio.Project}
+ * {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+ *
  * @author EM1LJAN
  */
 @Component
@@ -36,6 +39,13 @@ public class UploadBuilder {
         this.projectRepository = projectRepository;
     }
 
+    /**
+     * the method loads the file and creates an object {@link ru.emiljan.servicedevdevices.models.order.FileInfo}
+     * @param file Multipart File
+     * @param transferInfo {@link ru.emiljan.servicedevdevices.models.order.TransferInfo}
+     * @return FileInfo object
+     * @throws IOException
+     */
     public FileInfo uploadFile(MultipartFile file, TransferInfo transferInfo) throws IOException {
         final String path = transferInfo.getPath();
         final String contentType = file.getContentType();
