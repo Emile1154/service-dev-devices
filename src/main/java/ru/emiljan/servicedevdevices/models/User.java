@@ -2,7 +2,9 @@ package ru.emiljan.servicedevdevices.models;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.payment.Payment;
+import ru.emiljan.servicedevdevices.models.portfolio.Comment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -73,8 +75,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
     @OneToOne
     @JoinColumn(name = "image_id")
     private Image image;
+
+    public boolean checkAuthority(String inputRole){
+        return getRoles().stream().anyMatch(role -> role.getRole().contains(inputRole));
+    }
 
 }

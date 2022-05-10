@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.emiljan</groupId>
 	<artifactId>servicedevdevices</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>ServiceDevDevices</name>
 	<description>spring boot project, service develop devices</description>
 	<properties>
@@ -92,8 +92,15 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.15</version>
 		</dependency>
-	</dependencies>
 
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

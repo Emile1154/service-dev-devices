@@ -2,68 +2,71 @@ package ru.emiljan.servicedevdevices.controllers.payControllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
+import ru.emiljan.servicedevdevices.services.URIBuilder;
+import ru.emiljan.servicedevdevices.services.UserService;
 import ru.emiljan.servicedevdevices.services.payservices.PaymentService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+ *
  * @author EM1LJAN
  */
 @Controller
 @RequestMapping("/payment")
 public class PaypalController {
     private final PaymentService paymentService;
-    private static final String FAIL_PAY_PAGE = "/paypalFail";
+    private final UserService userService;
+    private static final String FAIL_PAY_PAGE = "/payment/failed";
 
     @Autowired
-    public PaypalController(@Qualifier("paypalServiceImpl") PaymentService paymentService) {
+    public PaypalController(@Qualifier("paypalServiceImpl") PaymentService paymentService,
+                            UserService userService) {
         this.paymentService = paymentService;
+        this.userService = userService;
     }
 
     @GetMapping("/successfully")
-    public String thanks(Model model){
+    public String thanks(Model model, @AuthenticationPrincipal UserDetails user){
+        final User buyer = this.userService.findUserByNickname(user.getUsername());
+        model.addAttribute("user",buyer);
+        model.addAttribute("alarm", this.userService.checkNewNotifies(buyer));
         return "payment/thanks";
     }
 
+    @GetMapping("/failed")
+    public String fail(Model model, @AuthenticationPrincipal UserDetails user){
+        final User buyer = this.userService.findUserByNickname(user.getUsername());
+        model.addAttribute("user",buyer);
+        model.addAttribute("alarm", this.userService.checkNewNotifies(buyer));
+        return "payment/failed";
+    }
+
     @PostMapping("/capture")
-    public String paymentDone(@RequestParam String token){
+    public String paymentDone(@RequestParam String token, HttpServletRequest request){
         if(paymentService.captureOrder(token)){
-            paymentService.update(token);
+            paymentService.update(token, request);
             return "redirect:/payment/successfully";
         }
-        return "redirect:"+FAIL_PAY_PAGE;
+        return "redirect:/"+FAIL_PAY_PAGE;
     }
 
     @PostMapping("/pay/current-order/{id}")
     public String initBuy(@PathVariable("id") Long orderId,
                              HttpServletRequest request,
                              @AuthenticationPrincipal UserDetails user){
-        final URI captureUrl = buildCaptureUrl(request);
-        PaypalPayment payment = (PaypalPayment) paymentService.createOrder(captureUrl, orderId);
+        PaypalPayment payment = (PaypalPayment)
+                paymentService.createOrder(URIBuilder
+                        .buildURI(request,"/payment/capture"), orderId);
         paymentService.save(payment, user.getUsername(), orderId);
-        return "redirect:"+ payment.getPaypalApproveLink();
-    }
-
-    private URI buildCaptureUrl(HttpServletRequest request) {
-        try {
-            URI url = URI.create(request.getRequestURL().toString());
-            return new URI(url.getScheme(),
-                    url.getUserInfo(),
-                    url.getHost(),
-                    url.getPort(),
-                    "/payment/capture",
-                    null, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        return "redirect:/"+payment.getPaypalApproveLink();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.emiljan.servicedevdevices.models.Image;
 
 /**
+ *
  * @author EM1LJAN
  */
 @Repository

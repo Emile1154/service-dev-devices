@@ -1,4 +1,12 @@
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
   jpa:
     hibernate:
       ddl-auto: none
@@ -10,8 +18,8 @@ spring:
 
   datasource:
     url: jdbc:mysql://localhost:3306/spring_db
-    username: admin
-    password: password
+    username:
+    password:
     tomcat:
       validation-query: SELECT 1
       test-while-idle: true
@@ -19,18 +27,29 @@ spring:
   mail:
     host: smtp.yandex.ru
     port: 465
-    username: email778@yandex.ru
-    password: password
+    username:
+    password:
     protocol: smtps
   sql:
     init:
       mode: always
 vkpay:
-  clientId: some-clientId
-  clientSecret: some-secret
+  clientId:
+  clientSecret:
 paypal:
-  clientId: some-clientId
-  clientSecret: some-secret
+  clientId:
+  clientSecret:
+
+upload:
+  project:
+    path: C:/Users/HOME-PC/Desktop/project/projects/
+    types: application/pdf,image/png,image/jpeg
+  order:
+    path: C:/Users/HOME-PC/Desktop/project/orders/
+    types: application/pdf,application/msdoc,application/vnd
+  image:
+    types: image/gif,image/png,image/jpeg
+
 notifies:
   ru:
     welcome:
@@ -38,12 +57,12 @@ notifies:
       message: Ваш аккаунт успешно активирован!
     buy:
       title: Оплата прошла успешно!
-      message: Посмотреть чек оплаты можно здесь':' %s
+      message: Посмотреть чек оплаты можно здесь — %s
     info:
       title: Ваш статус заявки изменён!
-      message: Перейдите по ссылке':' %s для того, чтобы узнать подробней.
+      message: Перейдите по ссылке — %s для того, чтобы узнать подробней.
     order:
       title: Вы успешно создали заказ!
-      message: Ваш заказ сейчас на расмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.
+      message: Ваш заказ сейчас на рассмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.
 server:
-  port: 8080
+  port: 9000

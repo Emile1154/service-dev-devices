@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.CustomOrder;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.payrepo.PaymentRepository;
@@ -14,10 +14,16 @@ import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 import ru.emiljan.servicedevdevices.specifications.PaymentSpecification;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User} with Manager role
+ *
+ * @author EM1LJAN
+ */
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
@@ -38,37 +44,38 @@ public class ManagerController {
     public String indexOrders(Model model, Principal user,
                               @RequestParam(value = "columns", required = false)
                                       List<String> columns, String keyword){
-        model.addAttribute("user",
-                userService.findUserByNickname(user.getName()));
+        final User currentUser = this.userService.findUserByNickname(user.getName());
+        model.addAttribute("user", currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         if(columns!=null){
             model.addAttribute("key", keyword);
             model.addAttribute("orders",
                     orderService.findOrdersByKeyword(columns, keyword));
             return "admin/index_orders";
         }
-        model.addAttribute("orders",
-                orderService.findAllOrders());
+        model.addAttribute("orders", orderService.findAllOrders());
         return "admin/index_orders";
     }
 
     @PostMapping("/orders/update/{id}")
     public String setOrderStatus(@PathVariable("id") Long id, String input,
-                                 BigDecimal price){
+                                 BigDecimal price, HttpServletRequest request){
         CustomOrder order = orderService.findById(id);
         if(price.equals(BigDecimal.ZERO) || price.equals(order.getPrice())){
-            orderService.update(order, Status.valueOf(input));
-            return "redirect:/admin/orders";
+            orderService.update(order, Status.valueOf(input),request);
+            return "redirect:/manager/orders";
         }
-        orderService.update(order,price);
-        return "redirect:/admin/orders";
+        orderService.update(order,price,request);
+        return "redirect:/manager/orders";
     }
 
     @GetMapping("/payments")
     public String paymentsAll(Model model, @AuthenticationPrincipal UserDetails user,
                               @RequestParam(value = "columns", required = false)
                                       List<String> columns, String keyword){
-        model.addAttribute("user",
-                this.userService.findUserByNickname(user.getUsername()));
+        final User currentUser = this.userService.findUserByNickname(user.getUsername());
+        model.addAttribute("user", currentUser);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(currentUser));
         if(columns!=null){
             model.addAttribute("key",keyword);
             model.addAttribute("history",
@@ -79,27 +86,18 @@ public class ManagerController {
         return "payment/payment_list";
     }
 
-    @GetMapping("/orders/{id}")
-    public String viewOrders(@PathVariable("id") Long id, Model model,
-                             @AuthenticationPrincipal UserDetails moder){
-        User user = this.userService.findById(id);
-        if(user==null){
-            return null;
-        }
-        model.addAttribute("user", this.userService.findUserByNickname(moder.getUsername()));
-        model.addAttribute("orders", this.orderService.findOrdersByUserId(user.getId()));
-        return "orders/orders_list";
-    }
-
     @GetMapping("/payments/{id}")
     public String viewPayments(@PathVariable("id") Long id, Model model,
-                                @AuthenticationPrincipal UserDetails moder){
-        User user = this.userService.findById(id);
-        if(user==null){
+                                @AuthenticationPrincipal UserDetails currentUser){
+        final User checkoutUser = this.userService.findById(id);
+        if(checkoutUser==null){
             return null;
         }
-        model.addAttribute("user", this.userService.findUserByNickname(moder.getUsername()));
-        model.addAttribute("history", this.paymentRepository.findPaymentsByUserId(user.getId()));
+        final User user = this.userService.findUserByNickname(currentUser.getUsername());
+        model.addAttribute("user", user);
+        model.addAttribute("alarm",this.userService.checkNewNotifies(user));
+        model.addAttribute("history", this.userService.findAllPayListByUserId(checkoutUser.getId()));
         return "payment/payment_list";
     }
+
 }

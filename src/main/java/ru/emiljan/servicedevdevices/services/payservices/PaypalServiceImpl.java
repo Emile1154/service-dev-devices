@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.emiljan.servicedevdevices.models.*;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.payment.PayStatus;
 import ru.emiljan.servicedevdevices.models.payment.Payment;
 import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
-import ru.emiljan.servicedevdevices.repositories.OrderRepository;
+import ru.emiljan.servicedevdevices.repositories.orderRepo.OrderRepository;
 import ru.emiljan.servicedevdevices.repositories.payrepo.PaypalRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
+import ru.emiljan.servicedevdevices.services.URIBuilder;
 import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -24,6 +27,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
+ * Implementation of {@link PaymentService} interface
+ * for {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+ *
  * @author EM1LJAN
  */
 @Service
@@ -50,6 +56,12 @@ public class PaypalServiceImpl implements PaymentService {
         this.notifyService = notifyService;
     }
 
+    /**
+     * Create payment
+     * @param returnURI captureURI
+     * @param order_id
+     * @return PayPal payment
+     */
     @Override
     @SneakyThrows
     public Payment createOrder(URI returnURI, Long order_id) {
@@ -98,6 +110,11 @@ public class PaypalServiceImpl implements PaymentService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
+    /**
+     * capture payment
+     * @param token
+     * @return true - payment success, false - payment failed
+     */
     @Override
     public boolean captureOrder(String token) {
         final OrdersCaptureRequest request = new OrdersCaptureRequest(token);
@@ -110,6 +127,12 @@ public class PaypalServiceImpl implements PaymentService {
         }
     }
 
+    /**
+     * add payment to database
+     * @param payment {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+     * @param username user nickname
+     * @param orderId order id
+     */
     @Override
     @Transactional
     public void save(Payment payment, String username, Long orderId) {
@@ -125,15 +148,20 @@ public class PaypalServiceImpl implements PaymentService {
         paypalRepository.save((PaypalPayment) payment);
     }
 
+    /**
+     * finish if payment captured
+     * @param token
+     * @param request for build uri
+     */
     @Override
     @Transactional
-    public void update(String token) {
+    public void update(String token, HttpServletRequest request) {
         PaypalPayment paypal = paypalRepository.findPaypalPaymentByToken(token);
         paypal.setPayStatus(PayStatus.PAYED);
         CustomOrder order = paypal.getOrder();
         order.setOrderStatus(Status.PAYED);
         order.setPrice(BigDecimal.ZERO);
-        notifyService.createNotify("buy", order.getUser());
+        notifyService.createNotify("buy", order.getUser(), URIBuilder.buildURI(request,"/users/checklist/"+order.getUser().getId()));
         orderRepository.save(order);
         paypalRepository.save(paypal);
     }

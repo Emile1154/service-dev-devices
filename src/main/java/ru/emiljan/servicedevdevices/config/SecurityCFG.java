@@ -3,6 +3,7 @@ package ru.emiljan.servicedevdevices.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,6 +16,7 @@ import ru.emiljan.servicedevdevices.services.MyUserDetailsService;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityCFG extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MyUserDetailsService userDetailsService;
@@ -33,7 +35,6 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(bCryptPasswordEncoder);
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -43,6 +44,7 @@ public class SecurityCFG extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users/orders").authenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/manager/**").hasAnyRole("ADMIN","MANAGER")
+                .antMatchers("/developer/**").hasAnyRole("ADMIN","MANAGER","DEVELOPER")
                 .and()
                     .formLogin().loginPage("/users/login")
                     .usernameParameter("login")

@@ -3,51 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/style1.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cc395f8268.js" crossorigin="anonymous"></script>
     <title>Мои заказы</title>
 </head>
 <body>
     <div class="wrapper">
         <div class="header">
-            <div id="nav">
+            <div id="nav" class="container text-center">
                 <ul class="menu">
                     <li id="menu_item1-"><a href="/developing">Разработка</a></li>
-                    <li id="menu_item2-"><a href="/collection">Портфолио</a></li>
+                    <li id="menu_item2-"><a href="/portfolio">Портфолио</a></li>
                     <li id="menu_item3-"><a href="/about">О нас</a></li>
                     <li id="menu_item4-"><a href="/contacts">Контакты</a></li>
                     <li id="menu_item5-"><a th:href="@{/users/{id}(id=${user.getId()})}">Мой аккаунт</a></li>
-                    <li id="menu_item6"><a th:href="@{/users/notify}"><img th:src="@{/images/notify-button.png}" width="15"></a></li>
+                    <li id="menu_item6-">
+                        <a th:href="@{/users/notify}">
+                            <i class="fas fa-solid fa-bell fa-lg"></i>
+                            <span th:if="${alarm}" class="dot"></span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div class="user-container">
-            <table>
-                <tr>
-                    <th>Наименование проекта</th>
-                    <th>Дата создания</th>
-                    <th>Дата последнего изменеия</th>
-                    <th>Статус</th>
-                    <th>Цена</th>
-                </tr>
-                <div th:each="order : ${orders}">
-                    <tr>
-                        <td><div th:text="${order.getTitle()}">TITLE</div></td>
-                        <td><div th:text="${#temporals.format(order.getCreated(),'dd.MM.yyyy HH:mm'}">DATA_CREATED</div></td>
-                        <td><div th:text="${#temporals.format(order.getUpdated(),'dd.MM.yyyy HH:mm'}">DATA_UPDATED</div></td>
-                        <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
-                        <td><div th:text="${order.getPrice()}">PRICE</div></td>
-                        <td>
-                            <form th:action="@{/orders/{id}(id=${order.getId()})}">
-                                <input type="submit" value="Перейти к заказу">
-                            </form>
-                        </td>
-                    </tr>
+        <div class="container w-75">
+            <div class="mx-auto my-auto">
+                <div th:if="${!orders.isEmpty()}" class="col-auto">
+                    <table class="table table-hover">
+                        <tr>
+                            <th scope="col">Наименование проекта</th>
+                            <th scope="col">Дата создания</th>
+                            <th scope="col">Дата последнего изменеия</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Цена</th>
+                        </tr>
+                        <div th:each="order : ${orders}">
+                            <tr>
+                                <td><div th:text="${order.getTitle()}">TITLE</div></td>
+                                <td><div th:text="${#temporals.format(order.getCreated(),'dd.MM.yyyy HH:mm')}">DATA_CREATED</div></td>
+                                <td><div th:text="${#temporals.format(order.getUpdated(),'dd.MM.yyyy HH:mm')}">DATA_UPDATED</div></td>
+                                <td><div th:text="${order.getOrderStatus()}">STATUS</div></td>
+                                <td><div th:text="${order.getPrice()}">PRICE</div></td>
+                                <td>
+                                    <form th:action="@{/orders/{id}(id=${order.getId()})}">
+                                        <input class="btn btn-success" type="submit" value="Перейти к заказу">
+                                    </form>
+                                </td>
+                            </tr>
+                        </div>
+                    </table>
                 </div>
-            </table>
+                <div th:if="${orders.isEmpty()}">
+                    <h5 class="text-center text-secondary">Здесь пока что пусто</h5>
+                </div>
+            </div>
         </div>
         <div class="footer">
 
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

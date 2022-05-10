@@ -15,10 +15,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * Implementation of {@link org.springframework.security.core.userdetails.UserDetailsService} interface
+ * for {@link ru.emiljan.servicedevdevices.models.User}
+ *
  * @author EM1LJAN
  */
 @Service
 public class MyUserDetailsService implements UserDetailsService {
+
     private final UserService userService;
 
     @Autowired
@@ -26,6 +30,11 @@ public class MyUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
+    /**
+     * load user method and return spring user
+     * @param login email OR nickname
+     * @return {@link org.springframework.security.core.userdetails.User}
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(final String login){

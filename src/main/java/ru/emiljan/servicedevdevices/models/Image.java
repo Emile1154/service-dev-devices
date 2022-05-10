@@ -19,10 +19,10 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "icon64")
-    private String icon64;
+    @Column(name = "content_type")
+    private String contentType;
 
-    public Image(String icon64) {
-        this.icon64 = icon64;
-    }
+    @Lob
+    private byte[] bytes;
+
 }

@@ -5,6 +5,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ import javax.validation.Valid;
 import java.util.Map;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User}
+ *
  * @author EM1LJAN
  */
 @Controller
@@ -33,16 +36,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Transactional
     public String show(@PathVariable("id") Long id, Model model,
                        @AuthenticationPrincipal UserDetails currentUser){
         User user = userService.findById(id);
         model.addAttribute("user", user);
         if(currentUser != null){
             User authUser = userService.findUserByNickname(currentUser.getUsername());
-            model.addAttribute("currentUser", authUser);
-            model.addAttribute("vip", authUser.getRoles()   // id=1 -> USER
-                    .stream().anyMatch(role->role.getId()>=2));         // id=2 -> ADMIN
-        }                                                               // id=3 -> MANAGER
+            model.addAttribute("alarm",this.userService.checkNewNotifies(authUser));
+            boolean authority = authUser.getRoles().stream().anyMatch(role->role.getId()>=2);   // id=1 -> USER
+                                                                                               // id=2 -> ADMIN
+            model.addAttribute("currentUser", authUser);                          // id=3 -> MANAGER
+            model.addAttribute("vip", authority);
+        }
         return "users/show";
     }
 
@@ -51,7 +57,7 @@ public class UserController {
                            @AuthenticationPrincipal UserDetails currentUser){
         if(currentUser != null){
             User user = this.userService.findUserByNickname(currentUser.getUsername());
-
+            model.addAttribute("alarm",this.userService.checkNewNotifies(user));
             model.addAttribute("user", user);
             model.addAttribute("orders",
                     this.orderService.findOrdersByUserId(user.getId()));
@@ -100,7 +106,7 @@ public class UserController {
                     findUserByNickname(user.getUsername()).getId();
         }
         if(error != null){
-            model.addAttribute("error", getErrorMessage(request));
+            model.addAttribute("error", getErrorMsg(request));
         }
         if(logout != null){
             model.addAttribute("msg", "Вы вышли из аккаунта");
@@ -119,18 +125,24 @@ public class UserController {
         return null;
     }
 
-    private String getErrorMessage(HttpServletRequest request){
-
-        Exception exception = (Exception) request.getSession()
-                .getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
-
-        String error;
-        if(exception instanceof InternalAuthenticationServiceException) {
-            error = exception.getMessage();
+    @GetMapping("/checklist/{id}")
+    public String getCheckList(@PathVariable("id") Long id, Model model,
+                               @AuthenticationPrincipal UserDetails currentUser){
+        final User user = this.userService.findUserByNickname(currentUser.getUsername());
+        if(id == user.getId()){
+            model.addAttribute("user",user);
+            model.addAttribute("alarm",this.userService.checkNewNotifies(user));
+            model.addAttribute("history", this.userService.findAllPayListByUserId(id));
+            return "payment/payment_list";
         }
-        else{
-            error = "Неверный пароль";
+        return "redirect:/users/"+user.getId();
+    }
+
+    private String getErrorMsg(HttpServletRequest request){
+        Exception ex = (Exception) request.getSession().getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+        if(ex instanceof InternalAuthenticationServiceException){
+            return ex.getMessage();
         }
-        return error;
+        return "Пароль неверный";
     }
 }

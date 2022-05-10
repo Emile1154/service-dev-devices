@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.emiljan.servicedevdevices.models.CustomOrder;
+import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.User;
 
 import javax.persistence.*;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "payments")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "pay_method", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "pay_method",discriminatorType = DiscriminatorType.STRING)
 public abstract class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
