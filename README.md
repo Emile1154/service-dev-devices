@@ -51,3 +51,10 @@ this mysql schema is — https://github.com/Emile1154/service-dev-devices/blob/m
 * dropbuttons for posts
 ![dropbuttons](https://user-images.githubusercontent.com/42141666/167690915-b4cab23e-12a8-4038-8bf0-86de207a392b.png)
 
+* post show 
+![post_show](https://user-images.githubusercontent.com/42141666/167698747-822458de-ff0b-42c9-8475-69a810fcbba8.png)
+
+* comments\likes for post
+![comments-likes](https://user-images.githubusercontent.com/42141666/167698753-6b461905-2d0a-4b6a-a35a-553b90d9f4d2.png)
+
+
