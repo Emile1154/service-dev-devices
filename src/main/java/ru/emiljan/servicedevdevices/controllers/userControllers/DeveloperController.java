@@ -12,6 +12,11 @@ import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 
+/**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User} with Developer role
+ *
+ * @author EM1LJAN
+ */
 @Controller
 @RequestMapping("/developer")
 public class DeveloperController {

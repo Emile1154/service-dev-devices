@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User} with Admin role
+ *
  * @author EM1LJAN
  */
 @Controller
@@ -49,7 +51,7 @@ public class AdminController {
         return "admin/index";
     }
 
-    @PostMapping("/delete-users/{id}")
+    @DeleteMapping("/delete-users/{id}")
     public String deleteUser(@PathVariable("id") Long id){
         userService.deleteById(id);
         return "redirect:/admin/users";
@@ -83,9 +85,9 @@ public class AdminController {
         return "admin/admin_menu";
     }
 
-    @PostMapping("/delete-order/{id}")
+    @DeleteMapping("/delete-order/{id}")
     public String deleteOrder(@PathVariable("id") Long id){
-        orderService.deleteOrderById(id);
+        this.orderService.deleteOrderById(id);
         return "redirect:/manager/orders";
     }
 }

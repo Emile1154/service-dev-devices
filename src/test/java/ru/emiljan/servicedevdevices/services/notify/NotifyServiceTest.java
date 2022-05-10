@@ -56,11 +56,12 @@ class NotifyServiceTest {
     @Test
     void createNotify() {
         String key = "info";
-        notifyService.createNotify(key,user);
+        notifyService.createNotify(key,user, null);
         Mockito.verify(builder, Mockito.times(1)).buildNotify
                 (
                         ArgumentMatchers.eq(key),
-                        ArgumentMatchers.eq(user)
+                        ArgumentMatchers.eq(user),
+                        ArgumentMatchers.eq(null)
                 );
         Mockito.verify(notifyRepository, Mockito.times(1)).save
                 (

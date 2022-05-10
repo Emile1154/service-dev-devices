@@ -4,17 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.emiljan.servicedevdevices.models.Notify;
 import ru.emiljan.servicedevdevices.models.User;
-
-import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -39,7 +33,7 @@ class NotifyBuilderTest {
     void buildNotify() {
         String key = "info";
 
-        Notify notify = builder.buildNotify(key, user);
+        Notify notify = builder.buildNotify(key, user, null);
 
         Assertions.assertNotNull(notify.getTitle());
         Assertions.assertNotNull(notify.getMessage());

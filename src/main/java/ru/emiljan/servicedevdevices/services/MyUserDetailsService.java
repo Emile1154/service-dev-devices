@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service class for {@link org.springframework.security.core.userdetails.User}
+ * Implementation of {@link org.springframework.security.core.userdetails.UserDetailsService} interface
+ * for {@link ru.emiljan.servicedevdevices.models.User}
  *
  * @author EM1LJAN
  */

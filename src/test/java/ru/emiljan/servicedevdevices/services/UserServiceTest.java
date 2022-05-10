@@ -118,8 +118,8 @@ class UserServiceTest {
         Assertions.assertTrue(user.isActive());
         Mockito.verify(notifyService, Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("welcome"),
-                any()
-        );
+                any(),
+                null);
     }
 
     @Test
@@ -129,7 +129,7 @@ class UserServiceTest {
         Assertions.assertFalse(user.isActive());
         Mockito.verify(notifyService, Mockito.times(0)).createNotify(
                 ArgumentMatchers.eq("welcome"),
-                any()
-        );
+                any(),
+                null);
     }
 }

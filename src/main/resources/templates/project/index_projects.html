@@ -72,6 +72,7 @@
                                                         <p><i class="fas fa-edit"></i>Редактировать</p>
                                                     </a>
                                                     <form class="dropdown-item" th:action="@{/portfolio/delete/{id}(id=${project.getId()})}" th:method="post">
+                                                        <input type="hidden" name="_method" value="delete">
                                                         <button type="submit" class="button-link">
                                                             <p><i class="fas fa-trash-alt"></i>Удалить</p>
                                                         </button>

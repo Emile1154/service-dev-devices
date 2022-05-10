@@ -5,9 +5,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.models.payment.Payment;
 import ru.emiljan.servicedevdevices.repositories.ImageRepository;
 import ru.emiljan.servicedevdevices.repositories.RoleRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
+import ru.emiljan.servicedevdevices.repositories.payrepo.PaymentRepository;
 import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 import ru.emiljan.servicedevdevices.specifications.UserSpecifications;
 
@@ -27,18 +29,20 @@ public class UserService {
     private final MailSenderService mailSender;
     private final ImageRepository imageRepository;
     private final NotifyService notifyService;
+    private final PaymentRepository paymentRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, RoleRepository roleRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
                        MailSenderService mailSender, ImageRepository imageRepo,
-                       NotifyService notifyService) {
+                       NotifyService notifyService, PaymentRepository paymentRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSender = mailSender;
         this.imageRepository = imageRepo;
         this.notifyService = notifyService;
+        this.paymentRepository = paymentRepository;
     }
 
     public User findUserByEmail(String email) {
@@ -155,6 +159,10 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    public List<Payment> findAllPayListByUserId(Long id){
+        return this.paymentRepository.findPaymentsByUserId(id);
+    }
+
     /**
      * ban/unban method
      * @param id user id
@@ -180,7 +188,7 @@ public class UserService {
         if(user != null){
             user.setActive(true);
             user.setActivateCode(null);
-            notifyService.createNotify("welcome",user);
+            notifyService.createNotify("welcome",user, null);
             return true;
         }
         return false;

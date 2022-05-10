@@ -1,4 +1,8 @@
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
   servlet:
     multipart:
       max-file-size: 15MB
@@ -25,16 +29,16 @@ spring:
     port: 465
     username:
     password:
-    protocol:
+    protocol: smtps
   sql:
     init:
       mode: always
 vkpay:
-  clientId: 627fdbfa24232a5b62f9c295baa93f7db9752873
-  clientSecret: Vb3D0s1OUaPCfR4Pwaeu
+  clientId:
+  clientSecret:
 paypal:
-  clientId: AYorBMEX1pnSw2vIsrEl0h5BmQldeaPlu8KS0mATQvHJ6wra9MT_thFLUQhrwTWP-5VonDWXTMLBToRn
-  clientSecret: EFJy1rn2dVRZhZavmmvfCDsJOL_eU_1aeQyx6WIqansdwutGiZqPJ78GtgOkPjvVRmR4jUwHQVdD582s
+  clientId:
+  clientSecret:
 
 upload:
   project:
@@ -53,10 +57,10 @@ notifies:
       message: Ваш аккаунт успешно активирован!
     buy:
       title: Оплата прошла успешно!
-      message: Посмотреть чек оплаты можно здесь - %s
+      message: Посмотреть чек оплаты можно здесь — %s
     info:
       title: Ваш статус заявки изменён!
-      message: Перейдите по ссылке - %s для того, чтобы узнать подробней.
+      message: Перейдите по ссылке — %s для того, чтобы узнать подробней.
     order:
       title: Вы успешно создали заказ!
       message: Ваш заказ сейчас на рассмотрении, в ближайшее время мы свяжемся с вами для уточнения деталей заказа.

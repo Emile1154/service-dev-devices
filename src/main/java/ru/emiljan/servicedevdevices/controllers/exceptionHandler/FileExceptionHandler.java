@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
+ * ControllerAdvice for {@link OrderController} & {@link ProjectController} classes
+ *
  * @author EM1LJAN
  */
 @ControllerAdvice(assignableTypes = {OrderController.class, ProjectController.class})

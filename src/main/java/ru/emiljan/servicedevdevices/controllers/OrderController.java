@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
+ *
  * @author EM1LJAN
  */
 @Controller
@@ -135,7 +137,7 @@ public class OrderController {
         order.setDesignType(DesignType.valueOf(design));
         order.setUser(customer);
         orderService.saveOrder(order);
-        return "success";
+        return "redirect:/users/orders";
     }
 
     @GetMapping("/payments")

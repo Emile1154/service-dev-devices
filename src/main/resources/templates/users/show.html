@@ -73,7 +73,10 @@
                             <input class="btn btn-secondary " type="submit" value="Создать заказ"/>
                         </form>
                         <form th:action="@{/users/orders}" method="get">
-                            <input class="mx-2 btn btn-secondary " type="submit" value="Управление заказами"/>
+                            <input class="mx-2 btn btn-secondary" type="submit" value="Управление заказами"/>
+                        </form>
+                        <form th:action="@{/users/checklist/{id}(id=${currentUser.getId()})}">
+                            <input class="mx-2 btn btn-secondary" type="submit" value="Посмотреть лист оплаты">
                         </form>
                     </div>
                     <div class="d-flex flex-row mt-3" sec:authorize="hasRole('MANAGER')">

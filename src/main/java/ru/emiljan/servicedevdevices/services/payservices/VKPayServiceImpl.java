@@ -9,20 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.order.CustomOrder;
 import ru.emiljan.servicedevdevices.models.payment.*;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.OrderRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 import ru.emiljan.servicedevdevices.repositories.payrepo.VKPayRepository;
+import ru.emiljan.servicedevdevices.services.URIBuilder;
 import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 /**
- * Service class for {@link ru.emiljan.servicedevdevices.models.payment.VKPayPayment}
- * implementing {@link ru.emiljan.servicedevdevices.services.payservices.PaymentService}
+ * Implementation of {@link PaymentService} interface
+ * for {@link ru.emiljan.servicedevdevices.models.payment.VKPayPayment}
  *
  * @author EM1LJAN
  */
@@ -164,10 +168,14 @@ public class VKPayServiceImpl implements PaymentService {
      */
     @Override
     @Transactional
-    public void update(String id) {
+    public void update(String id, HttpServletRequest request) {
         VKPayPayment vkPayPayment = vkPayRepository.findVKPayPaymentById(Long.parseLong(id));
         vkPayPayment.setPayStatus(PayStatus.PAYED);
-        notifyService.createNotify("buy", vkPayPayment.getUser());
+        final CustomOrder order = vkPayPayment.getOrder();
+        order.setOrderStatus(Status.PAYED);
+        order.setPrice(BigDecimal.ZERO);
+        notifyService.createNotify("buy", vkPayPayment.getUser(), URIBuilder.buildURI(request, "/users/checklist/"+order.getUser().getId()));
         vkPayRepository.save(vkPayPayment);
+        orderRepository.save(order);
     }
 }

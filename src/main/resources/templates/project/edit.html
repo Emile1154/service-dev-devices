@@ -30,7 +30,7 @@
         <div class="mx-auto card" style="width: 600px;">
             <div class="card-body">
                 <h5 class="card-title mb-2">Редактирование</h5>
-                <form th:action="@{/portfolio/update}" th:method="post" th:object="${project}" enctype="multipart/form-data">
+                <form th:action="@{/portfolio/update/{id}(id=${project.getId()})}" th:method="patch" th:object="${project}" enctype="multipart/form-data">
                     <div class="card-subtitle my-3">
                         <input class="form-control form-control-lg" type="text" th:field="*{title}" id="title" th:value="${project.getTitle()}">
                         <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="validation-message">TITLE_ERROR</div>

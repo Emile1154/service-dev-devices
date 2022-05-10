@@ -4,12 +4,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import ru.emiljan.servicedevdevices.controllers.ImageController;
-import ru.emiljan.servicedevdevices.controllers.userControllers.UserController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * ControllerAdvice for {@link ImageController} class
+ *
+ * @author EM1LJAN
+ */
 @ControllerAdvice(assignableTypes = {ImageController.class})
 public class ImageExceptionHandler {
     @ExceptionHandler(IOException.class)

@@ -144,9 +144,7 @@ public class ProjectService {
      */
     @Transactional
     public void update(Project project){
-        this.projectRepository.update(this.projectRepository.getMaxId(),
-                                    project.getTitle(),
-                                    project.getDescription());
+        this.projectRepository.save(project);
     }
 
     @Transactional

@@ -15,7 +15,5 @@ import java.util.List;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long>,
                                             JpaSpecificationExecutor<Payment> {
-    @Query(value = "SELECT * FROM payments WHERE user_id = ?1",nativeQuery = true)
-    List<Payment> findAllByKeyword(String userId);
     List<Payment> findPaymentsByUserId(Long id);
 }

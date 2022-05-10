@@ -68,28 +68,33 @@
             </div>
             <div class="d-flex justify-content-center">
                 <div class="col-auto">
-                    <table class="table table-hover">
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">USER_ID</th>
-                            <th scope="col">ORDER_ID</th>
-                            <th scope="col">STATUS</th>
-                            <th scope="col">CREATED</th>
-                            <th scope="col">UPDATED</th>
-                            <th scope="col">PAY_METHOD</th>
-                        </tr>
-                        <div th:each="payment : ${history}">
+                    <div th:if="${history.isEmpty()}">
+                        <h5 class="text-center text-secondary">Здесь пока что пусто.</h5>
+                    </div>
+                    <div th:if="${!history.isEmpty()}">
+                        <table class="table table-hover">
                             <tr>
-                                <td th:text="${payment.getId()}">ID</td>
-                                <td th:text="${payment.getUser().getId()}">USER_ID</td>
-                                <td th:text="${payment.getOrder().getId()}">ORDER_ID</td>
-                                <td th:text="${payment.getPayStatus().name()}">STATUS</td>
-                                <td th:text="${#temporals.format(payment.getCreated(),'dd.MM.yyyy HH:mm')}">CREATED DATE</td>
-                                <td th:text="${#temporals.format(payment.getUpdated(),'dd.MM.yyyy HH:mm')}">UPDATED DATE</td>
-                                <td th:text="${payment.getPayMethod()}">PAY METHOD</td>
+                                <th scope="col">ID</th>
+                                <th scope="col">USER_ID</th>
+                                <th scope="col">ORDER_ID</th>
+                                <th scope="col">STATUS</th>
+                                <th scope="col">CREATED</th>
+                                <th scope="col">UPDATED</th>
+                                <th scope="col">PAY_METHOD</th>
                             </tr>
-                        </div>
-                    </table>
+                            <div th:each="payment : ${history}">
+                                <tr>
+                                    <td th:text="${payment.getId()}">ID</td>
+                                    <td th:text="${payment.getUser().getId()}">USER_ID</td>
+                                    <td th:text="${payment.getOrder().getId()}">ORDER_ID</td>
+                                    <td th:text="${payment.getPayStatus().name()}">STATUS</td>
+                                    <td th:text="${#temporals.format(payment.getCreated(),'dd.MM.yyyy HH:mm')}">CREATED DATE</td>
+                                    <td th:text="${#temporals.format(payment.getUpdated(),'dd.MM.yyyy HH:mm')}">UPDATED DATE</td>
+                                    <td th:text="${payment.getPayMethod()}">PAY METHOD</td>
+                                </tr>
+                            </div>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

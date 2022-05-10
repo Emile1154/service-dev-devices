@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.emiljan.servicedevdevices.models.Notify;
 import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
@@ -19,6 +18,7 @@ import javax.validation.Valid;
 import java.util.Map;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User}
  *
  * @author EM1LJAN
  */
@@ -123,6 +123,19 @@ public class UserController {
             return "authorization/login";
         }
         return null;
+    }
+
+    @GetMapping("/checklist/{id}")
+    public String getCheckList(@PathVariable("id") Long id, Model model,
+                               @AuthenticationPrincipal UserDetails currentUser){
+        final User user = this.userService.findUserByNickname(currentUser.getUsername());
+        if(id == user.getId()){
+            model.addAttribute("user",user);
+            model.addAttribute("alarm",this.userService.checkNewNotifies(user));
+            model.addAttribute("history", this.userService.findAllPayListByUserId(id));
+            return "payment/payment_list";
+        }
+        return "redirect:/users/"+user.getId();
     }
 
     private String getErrorMsg(HttpServletRequest request){

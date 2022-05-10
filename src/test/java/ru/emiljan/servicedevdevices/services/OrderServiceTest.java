@@ -79,7 +79,8 @@ class OrderServiceTest {
         Assertions.assertEquals(Status.NEW, order.getOrderStatus());
         Mockito.verify(notifyService, Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("order"),
-                ArgumentMatchers.any()
+                ArgumentMatchers.any(),
+                null
         );
         Mockito.verify(orderRepository,Mockito.times(1)).save(ArgumentMatchers.any());
     }
@@ -117,37 +118,39 @@ class OrderServiceTest {
     @Test
     void updateStatus() {
         Status status = Status.CLOSED;
-        orderService.update(order, status);
+        orderService.update(order, status, null);
         Assertions.assertEquals(status, order.getOrderStatus());
         Mockito.verify(orderRepository, Mockito.times(1)).save(order);
         Mockito.verify(notifyService,Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("info"),
-                ArgumentMatchers.any()
-        );
+                ArgumentMatchers.any(),
+                null
+               );
     }
 
     @Test
     void updatePrice() {
         BigDecimal price = new BigDecimal(2500);
-        orderService.update(order, price);
+        orderService.update(order, price, null);
         Assertions.assertEquals(Status.ACCEPTED, order.getOrderStatus());
         Assertions.assertEquals(price, order.getPrice());
         Mockito.verify(orderRepository, Mockito.times(1)).save(order);
         Mockito.verify(notifyService,Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("info"),
-                ArgumentMatchers.any()
+                ArgumentMatchers.any(),
+                null
         );
     }
 
     @Test
     void updatePriceFail(){
         BigDecimal price = new BigDecimal(2500);
-        orderService.update(null, price);
+        orderService.update(null, price, null);
     }
 
     @Test
     void updateStatusFail(){
         Status status = Status.CLOSED;
-        orderService.update(null, status);
+        orderService.update(null, status, null);
     }
 }

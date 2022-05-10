@@ -9,13 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.emiljan.servicedevdevices.models.payment.Parameters;
 import ru.emiljan.servicedevdevices.models.payment.VKPayPayment;
+import ru.emiljan.servicedevdevices.services.URIBuilder;
 import ru.emiljan.servicedevdevices.services.payservices.PaymentService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
+ * RestController class for {@link ru.emiljan.servicedevdevices.models.payment.VKPayPayment}
+ *
  * @author EM1LJAN
  */
 @RestController
@@ -32,8 +33,10 @@ public class VKPayController {
     @PostMapping(value = "/capture", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String paymentDone(HttpEntity<String> httpEntity){
-        System.out.println(httpEntity.getBody());
-        return "redirect:/payment/successfully";
+        if(paymentService.captureOrder(httpEntity.getBody())){
+            return "redirect:/payment/successfully";
+        }
+        return "redirect:/payment/failed";
     }
 
     @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,24 +44,8 @@ public class VKPayController {
                               @AuthenticationPrincipal UserDetails user,
                               HttpServletRequest request){
         VKPayPayment payment = (VKPayPayment) paymentService
-                .createOrder(buildCaptureUrl(request), orderId);
+                .createOrder(URIBuilder.buildURI(request,"/api/v1/vk-pay/capture"), orderId);
         paymentService.save(payment,user.getUsername(),orderId);
         return payment.getParam();
-    }
-
-
-
-    private URI buildCaptureUrl(HttpServletRequest request) {
-        try {
-            URI url = URI.create(request.getRequestURL().toString());
-            return new URI(url.getScheme(),
-                    url.getUserInfo(),
-                    url.getHost(),
-                    url.getPort(),
-                    "/api/v1/vk-pay/capture",
-                    null, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

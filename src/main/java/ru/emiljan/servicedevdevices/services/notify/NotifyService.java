@@ -8,6 +8,7 @@ import ru.emiljan.servicedevdevices.models.User;
 import ru.emiljan.servicedevdevices.repositories.NotifyRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -33,11 +34,12 @@ public class NotifyService {
     /**
      * create new notify method
      * @param key value notify
-     * @param user {@link ru.emiljan.servicedevdevices.models.User}
+     * @param user {@link User}
+     * @param uri link for see more info
      */
     @Transactional
-    public void createNotify(String key, User user){
-        Notify notify = this.notifyBuilder.buildNotify(key, user);
+    public void createNotify(String key, User user, URI uri){
+        Notify notify = this.notifyBuilder.buildNotify(key, user, uri);
         notifyRepository.save(notify);
         userRepository.save(user);
     }

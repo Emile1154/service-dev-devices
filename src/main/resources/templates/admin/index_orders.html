@@ -125,6 +125,7 @@
                             <td>
                                 <div sec:authorize="hasRole('ADMIN')">
                                     <form th:method="post" th:action="@{/admin/delete-order/{id}(id=${order.getId()})}">
+                                        <input type="hidden" name="_method" value="delete">
                                         <input class="btn btn-danger" type="submit" value="Delete"/>
                                     </form>
                                 </div>

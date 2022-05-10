@@ -16,8 +16,10 @@ import ru.emiljan.servicedevdevices.models.payment.PaypalPayment;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.OrderRepository;
 import ru.emiljan.servicedevdevices.repositories.payrepo.PaypalRepository;
 import ru.emiljan.servicedevdevices.repositories.UserRepository;
+import ru.emiljan.servicedevdevices.services.URIBuilder;
 import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -25,7 +27,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Service class for {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
+ * Implementation of {@link PaymentService} interface
+ * for {@link ru.emiljan.servicedevdevices.models.payment.PaypalPayment}
  *
  * @author EM1LJAN
  */
@@ -148,16 +151,17 @@ public class PaypalServiceImpl implements PaymentService {
     /**
      * finish if payment captured
      * @param token
+     * @param request for build uri
      */
     @Override
     @Transactional
-    public void update(String token) {
+    public void update(String token, HttpServletRequest request) {
         PaypalPayment paypal = paypalRepository.findPaypalPaymentByToken(token);
         paypal.setPayStatus(PayStatus.PAYED);
         CustomOrder order = paypal.getOrder();
         order.setOrderStatus(Status.PAYED);
         order.setPrice(BigDecimal.ZERO);
-        notifyService.createNotify("buy", order.getUser());
+        notifyService.createNotify("buy", order.getUser(), URIBuilder.buildURI(request,"/users/checklist/"+order.getUser().getId()));
         orderRepository.save(order);
         paypalRepository.save(paypal);
     }

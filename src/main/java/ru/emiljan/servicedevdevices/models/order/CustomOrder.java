@@ -5,13 +5,17 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.emiljan.servicedevdevices.models.Status;
 import ru.emiljan.servicedevdevices.models.User;
+import ru.emiljan.servicedevdevices.models.payment.Payment;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
+ * Entity class
+ *
  * @author EM1LJAN
  */
 @Getter
@@ -58,7 +62,10 @@ public class CustomOrder {
     @Column(name="order_status")
     private Status orderStatus;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Payment> payments;
 }

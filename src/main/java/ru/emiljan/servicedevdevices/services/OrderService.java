@@ -16,6 +16,7 @@ import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 import ru.emiljan.servicedevdevices.services.project.FileService;
 import ru.emiljan.servicedevdevices.specifications.OrderSpecifications;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -51,11 +52,11 @@ public class OrderService {
     }
 
     public CustomOrder findById(Long id){
-        return orderRepository.findById(id).orElse(null);
+        return this.orderRepository.findById(id).orElse(null);
     }
 
     public List<CustomOrder> findAllOrders(){
-        return orderRepository.findAll();
+        return this.orderRepository.findAll();
     }
 
     public File getFileByName(String filename){
@@ -64,7 +65,9 @@ public class OrderService {
 
     @Transactional
     public void deleteOrderById(Long id){
-        orderRepository.deleteById(id);
+        final CustomOrder order = this.orderRepository.getById(id);
+        new File(transferInfo.getPath() + order.getFileInfo().getFilename()).delete();
+        this.orderRepository.deleteById(id);
     }
 
     /**
@@ -74,7 +77,7 @@ public class OrderService {
      * @return list of orders matching the specification
      */
     public List<CustomOrder> findOrdersByKeyword(List<String> columns, String keyword){
-        return orderRepository.findAll(OrderSpecifications.findByKeyword(keyword, columns));
+        return this.orderRepository.findAll(OrderSpecifications.findByKeyword(keyword, columns));
     }
 
     /**
@@ -96,12 +99,12 @@ public class OrderService {
     @Transactional
     public void saveOrder(CustomOrder order){
         order.setOrderStatus(Status.NEW);
-        notifyService.createNotify("order",order.getUser());
-        orderRepository.save(order);
+        this.notifyService.createNotify("order",order.getUser(), null);
+        this.orderRepository.save(order);
     }
 
     public List<CustomOrder> findOrdersByUserId(Long id){
-        return orderRepository.findOrderByUserId(id);
+        return this.orderRepository.findOrderByUserId(id);
     }
 
     /**
@@ -115,11 +118,11 @@ public class OrderService {
         if(file.getSize() == 0){
             throw new FileUploadException("Загрузите файл");
         }
-        if(file.getSize()>MAX_UPLOAD_SIZE){
+        if(file.getSize() > MAX_UPLOAD_SIZE){
             throw new FileSizeLimitExceededException("Максимальный размер файла превышен", file.getSize(), MAX_UPLOAD_SIZE);
         }
         FileInfo fileInfo = this.uploadBuilder.uploadFile(file,transferInfo);
-        fileService.save(fileInfo);
+        this.fileService.save(fileInfo);
         return fileInfo;
     }
 
@@ -151,13 +154,14 @@ public class OrderService {
      * @param status {@link ru.emiljan.servicedevdevices.models.Status}
      */
     @Transactional
-    public void update(CustomOrder order, Status status){
+    public void update(CustomOrder order, Status status, HttpServletRequest request){
         if(order==null){
             return;
         }
         order.setOrderStatus(status);
-        orderRepository.save(order);
-        notifyService.createNotify("info", order.getUser());
+        this.orderRepository.save(order);
+        this.notifyService.createNotify("info", order.getUser(),
+                URIBuilder.buildURI(request, "/orders/"+order.getId()));
     }
 
     /**
@@ -166,13 +170,14 @@ public class OrderService {
      * @param price price value
      */
     @Transactional
-    public void update(CustomOrder order, BigDecimal price) {
+    public void update(CustomOrder order, BigDecimal price, HttpServletRequest request) {
         if(order==null){
             return;
         }
         order.setOrderStatus(Status.ACCEPTED);
         order.setPrice(price);
-        orderRepository.save(order);
-        notifyService.createNotify("info", order.getUser());
+        this.orderRepository.save(order);
+        this.notifyService.createNotify("info", order.getUser(),
+                URIBuilder.buildURI(request, "/orders/"+order.getId()));
     }
 }

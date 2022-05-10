@@ -63,7 +63,7 @@
             </form>
             <script type="text/javascript" th:src="@{/js/script-save.js}"></script>
         </div>
-        <div class="row d-flex justify-content-start">
+        <div class="row d-flex justify-content-center">
             <div class="col-auto">
                 <table class="table table-hover">
                     <tr>
@@ -106,6 +106,7 @@
                                     <input class="btn btn-dark my-2" type="submit" th:value="${user.isAccountNonLocked() == true}?'BAN':'UNBAN'"/>
                                 </form>
                                 <form th:method="post" th:action="@{/admin/delete-users/{id}(id=${user.getId()})}">
+                                    <input type="hidden" name="_method" value="delete">
                                     <input class="btn btn-danger my-2" type="submit" value="Delete"/>
                                 </form>
                             </td>
@@ -120,7 +121,7 @@
                                         <label class="form-check-label" for="manager">MANAGER</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" id="developer" type="checkbox" name="role" th:checked="${user.checkAuthority('DEVELOPER')}" value="ROLE_DEVELOPER">
+                                        <input class="form-check-input" id="developer" type="checkbox" name="role" th:checked="${user.checkAuthority('DEVELOP')}" value="ROLE_DEVELOP">
                                         <label class="form-check-label" for="developer">DEVELOPER</label>
                                     </div>
                                     <div class="form-check">

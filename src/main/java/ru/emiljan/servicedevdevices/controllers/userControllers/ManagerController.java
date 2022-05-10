@@ -14,11 +14,14 @@ import ru.emiljan.servicedevdevices.services.OrderService;
 import ru.emiljan.servicedevdevices.services.UserService;
 import ru.emiljan.servicedevdevices.specifications.PaymentSpecification;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.User} with Manager role
+ *
  * @author EM1LJAN
  */
 @Controller
@@ -56,13 +59,13 @@ public class ManagerController {
 
     @PostMapping("/orders/update/{id}")
     public String setOrderStatus(@PathVariable("id") Long id, String input,
-                                 BigDecimal price){
+                                 BigDecimal price, HttpServletRequest request){
         CustomOrder order = orderService.findById(id);
         if(price.equals(BigDecimal.ZERO) || price.equals(order.getPrice())){
-            orderService.update(order, Status.valueOf(input));
+            orderService.update(order, Status.valueOf(input),request);
             return "redirect:/manager/orders";
         }
-        orderService.update(order,price);
+        orderService.update(order,price,request);
         return "redirect:/manager/orders";
     }
 
@@ -93,8 +96,7 @@ public class ManagerController {
         final User user = this.userService.findUserByNickname(currentUser.getUsername());
         model.addAttribute("user", user);
         model.addAttribute("alarm",this.userService.checkNewNotifies(user));
-        model.addAttribute("history",
-                this.paymentRepository.findPaymentsByUserId(checkoutUser.getId()));
+        model.addAttribute("history", this.userService.findAllPayListByUserId(checkoutUser.getId()));
         return "payment/payment_list";
     }
 

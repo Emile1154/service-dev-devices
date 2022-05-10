@@ -3,17 +3,14 @@ package ru.emiljan.servicedevdevices.services;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 import ru.emiljan.servicedevdevices.models.order.FileInfo;
 import ru.emiljan.servicedevdevices.models.order.TransferInfo;
-import ru.emiljan.servicedevdevices.models.portfolio.Project;
-import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.FileRepository;
 import ru.emiljan.servicedevdevices.repositories.orderRepo.OrderRepository;
+import ru.emiljan.servicedevdevices.repositories.projectRepo.ProjectRepository;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +30,9 @@ public class UploadBuilder {
     private final ProjectRepository projectRepository;
 
     @Autowired
-    public UploadBuilder(FileRepository fileRepository, OrderRepository orderRepository, ProjectRepository projectRepository) {
+    public UploadBuilder(FileRepository fileRepository,
+                         OrderRepository orderRepository,
+                         ProjectRepository projectRepository) {
         this.fileRepository = fileRepository;
         this.orderRepository = orderRepository;
         this.projectRepository = projectRepository;

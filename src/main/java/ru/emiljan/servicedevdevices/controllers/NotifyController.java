@@ -15,6 +15,11 @@ import ru.emiljan.servicedevdevices.services.notify.NotifyService;
 
 import java.util.List;
 
+/**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.Notify}
+ *
+ * @author EM1LJAN
+ */
 @Controller
 @RequestMapping("/users/notify")
 public class NotifyController {

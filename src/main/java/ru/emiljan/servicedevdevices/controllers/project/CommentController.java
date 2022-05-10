@@ -1,7 +1,6 @@
 package ru.emiljan.servicedevdevices.controllers.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,11 @@ import ru.emiljan.servicedevdevices.services.project.ProjectService;
 import javax.validation.Valid;
 import java.util.Set;
 
+/**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.portfolio.Comment}
+ *
+ * @author EM1LJAN
+ */
 @Controller
 @RequestMapping("/comment")
 public class CommentController {
@@ -54,7 +58,8 @@ public class CommentController {
         return "redirect:/portfolio/"+id;
     }
 
-    @PostMapping("/delete/{id}")
+
+    @DeleteMapping("/delete/{id}")
     public String removeComment(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails user){  //admin and creator comment
         User currentUser = this.userService.findUserByNickname(user.getUsername());
         Comment comment = this.commentService.getById(id);

@@ -10,6 +10,8 @@ import ru.emiljan.servicedevdevices.services.UserService;
 import java.security.Principal;
 
 /**
+ * Navigation controller class.
+ *
  * @author EM1LJAN
  */
 @Controller

@@ -29,7 +29,7 @@ public class Project {
     private String title;
 
     @Column(name="description")
-    @Length(min = 25, max = 500, message = "Описание проекта должно содержать от 25 до 500 символов")
+    @Length(min = 25, max = 1500, message = "Описание проекта должно содержать от 25 до 500 символов")
     private String description;
 
     @Column(name = "rating")
@@ -41,7 +41,6 @@ public class Project {
 
     @OneToMany(mappedBy = "project",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Comment> comments;
-
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name="project_files", joinColumns = @JoinColumn(name = "project_id"),

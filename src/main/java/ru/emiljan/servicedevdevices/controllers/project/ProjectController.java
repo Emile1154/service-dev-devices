@@ -3,11 +3,9 @@ package ru.emiljan.servicedevdevices.controllers.project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Controller class for {@link ru.emiljan.servicedevdevices.models.portfolio.Project}
+ *
  * @author EM1LJAN
  */
 @Controller
@@ -79,7 +79,7 @@ public class ProjectController {
         return "redirect:/portfolio";
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_DEVELOPER", "ROLE_MANAGER"})
+    @Secured({"ROLE_ADMIN", "ROLE_DEVELOP", "ROLE_MANAGER"})
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal UserDetails user){
         final ProjectDTO project = this.projectService.getDTOById(id);
@@ -88,9 +88,9 @@ public class ProjectController {
         return "project/edit";
     }
 
-    @PostMapping("/update")
+    @PatchMapping("/update/{id}")
     public String update(@ModelAttribute("project") @Valid Project project, BindingResult bindingResult,
-                         Model model, @AuthenticationPrincipal UserDetails user,
+                         Model model, @AuthenticationPrincipal UserDetails user, @PathVariable("id") Long id,
                          @RequestParam("files") MultipartFile[] files, HttpServletRequest request) throws IOException{
         Map<String, Object> attr =
                 getAttributes(user.getUsername(),"/portfolio/edit/"+project.getId(), files, project);
@@ -108,7 +108,6 @@ public class ProjectController {
         project.setFileList(infoList);
         project.setPreviewId(infoList.get(0).getId());
         this.projectService.update(project);
-
         return "redirect:/portfolio";
     }
 
@@ -167,7 +166,7 @@ public class ProjectController {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_DEVELOPER", "ROLE_MANAGER"})
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public String deleteProject(@PathVariable("id") Long id){
         projectService.deleteById(id);
         return "redirect:/portfolio";

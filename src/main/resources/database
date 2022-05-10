@@ -7,6 +7,7 @@ CREATE TABLE images(
 ENGINE=InnoDB;
 -- default logotype
 INSERT INTO images VALUES (null, 'image/png', LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/logo.png'));
+
 -- Table users
 CREATE TABLE users(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -35,7 +36,6 @@ CREATE TABLE notifies(
 )
 ENGINE=InnoDB;
 
-
 -- Table roles
 CREATE TABLE roles(
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -57,7 +57,7 @@ ENGINE=InnoDB;
 CREATE TABLE projects(
     id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
-    description VARCHAR(500) NOT NULL,
+    description VARCHAR(1500) NOT NULL,
     created TIMESTAMP,
     preview_id BIGINT REFERENCES files_info(id),
     rating INT DEFAULT 0
