@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,14 +81,14 @@ class OrderServiceTest {
         Mockito.verify(notifyService, Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("order"),
                 ArgumentMatchers.any(),
-                null
+                ArgumentMatchers.isNull()
         );
         Mockito.verify(orderRepository,Mockito.times(1)).save(ArgumentMatchers.any());
     }
 
     @Test
     void uploadFile() throws IOException {
-        File testFile = new File("test1.txt");
+        File testFile = new File("./src/main/resources/resources/test/test1.txt");
         if (testFile.createNewFile()) {
             FileWriter writer = new FileWriter(testFile);
             writer.write("this is a test file");
@@ -118,27 +119,32 @@ class OrderServiceTest {
     @Test
     void updateStatus() {
         Status status = Status.CLOSED;
-        orderService.update(order, status, null);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/test/");
+
+        orderService.update(order, status, request);
         Assertions.assertEquals(status, order.getOrderStatus());
         Mockito.verify(orderRepository, Mockito.times(1)).save(order);
         Mockito.verify(notifyService,Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("info"),
                 ArgumentMatchers.any(),
-                null
+                ArgumentMatchers.isNotNull()
                );
     }
 
     @Test
     void updatePrice() {
         BigDecimal price = new BigDecimal(2500);
-        orderService.update(order, price, null);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/test/");
+        orderService.update(order, price, request);
         Assertions.assertEquals(Status.ACCEPTED, order.getOrderStatus());
         Assertions.assertEquals(price, order.getPrice());
         Mockito.verify(orderRepository, Mockito.times(1)).save(order);
         Mockito.verify(notifyService,Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("info"),
                 ArgumentMatchers.any(),
-                null
+                ArgumentMatchers.isNotNull()
         );
     }
 

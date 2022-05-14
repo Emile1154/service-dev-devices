@@ -55,7 +55,7 @@ class NotifyServiceTest {
 
     @Test
     void createNotify() {
-        String key = "info";
+        String key = "welcome";
         notifyService.createNotify(key,user, null);
         Mockito.verify(builder, Mockito.times(1)).buildNotify
                 (

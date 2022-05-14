@@ -31,7 +31,7 @@ class NotifyBuilderTest {
 
     @Test
     void buildNotify() {
-        String key = "info";
+        String key = "welcome";
 
         Notify notify = builder.buildNotify(key, user, null);
 

@@ -24,8 +24,8 @@ class FileCompareTest {
 
     @BeforeEach
     public void setUp(){
-        file1 = new File("compare1.txt");
-        file2 = new File("compare2.txt");
+        file1 = new File("./src/main/resources/resources/test/compare1.txt");
+        file2 = new File("./src/main/resources/resources/test/compare2.txt");
         try(FileWriter writer1 = new FileWriter(file1);
             FileWriter writer2 = new FileWriter(file2)){
             writer1.write("test text");

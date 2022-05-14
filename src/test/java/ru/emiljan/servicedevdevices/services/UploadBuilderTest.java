@@ -20,9 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -41,29 +38,34 @@ class UploadBuilderTest {
 
         transferInfo = TransferInfo.builder()
                     .allowedTypes(Arrays.asList(types.split(",")))
-                    .path("C:/Users/HOME-PC/Desktop/project/projects/")
+                    .path("./src/main/resources/resources/projects/")
                     .id(2)
                 .build();
     }
 
     @Test
     void uploadFile() throws IOException {
-//        File testFile = new File("test.jpg");
-//        if (testFile.createNewFile()) {
-//            FileWriter writer = new FileWriter(testFile);
-//            writer.write("this is a test file");
-//            writer.close();
-//        }
-//        FileInputStream fileInputStream = new FileInputStream(testFile);
-//        MultipartFile mf =
-//                new MockMultipartFile(
-//                        "file",
-//                        testFile.getName(),
-//                        "image/jpeg",
-//                        fileInputStream
-//                );
-//        FileInfo fileInfo = uploadBuilder.uploadFile(mf, transferInfo);
-//        Assertions.assertNotNull(fileInfo.getFilename());
-//        Assertions.assertNotNull(fileInfo.getContentType());
+        File testFile = new File("./src/main/resources/resources/test/test.jpg");
+        if (testFile.createNewFile()) {
+            FileWriter writer = new FileWriter(testFile);
+            writer.write("this is a test file");
+            writer.close();
+        }
+        FileInputStream fileInputStream = new FileInputStream(testFile);
+        MultipartFile mf =
+                new MockMultipartFile(
+                        "file",
+                        testFile.getName(),
+                        "image/jpeg",
+                        fileInputStream
+                );
+        try{
+            FileInfo fileInfo = uploadBuilder.uploadFile(mf, transferInfo);
+            Assertions.assertNotNull(fileInfo.getFilename());
+            Assertions.assertNotNull(fileInfo.getContentType());
+            new File(transferInfo.getPath()+fileInfo.getFilename()).delete();
+        }catch (FileAlreadyExistsException e){
+
+        }
     }
 }

@@ -44,7 +44,7 @@ class ProjectServiceTest {
 
     @Test
     void upload() throws IOException {
-        File newIcon = new File("test.jpg");
+        File newIcon = new File("./src/main/resources/resources/test/test.jpg");
         if(newIcon.length() == 0){
             FileWriter writer = new FileWriter(newIcon);
             writer.write("icon");

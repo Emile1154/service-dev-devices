@@ -38,7 +38,7 @@ import java.util.Map;
 public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
-    private static final String SAMPLE_FILE = "C:/Users/HOME-PC/Desktop/project/sample/sample.docx";
+    private static final String SAMPLE_FILE = "./src/main/resources/resources/sample/sample.docx";
 
     @Autowired
     public OrderController(OrderService orderService,
