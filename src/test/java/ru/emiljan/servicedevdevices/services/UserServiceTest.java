@@ -119,7 +119,7 @@ class UserServiceTest {
         Mockito.verify(notifyService, Mockito.times(1)).createNotify(
                 ArgumentMatchers.eq("welcome"),
                 any(),
-                null);
+                ArgumentMatchers.isNull());
     }
 
     @Test
@@ -130,6 +130,6 @@ class UserServiceTest {
         Mockito.verify(notifyService, Mockito.times(0)).createNotify(
                 ArgumentMatchers.eq("welcome"),
                 any(),
-                null);
+                ArgumentMatchers.isNull());
     }
 }

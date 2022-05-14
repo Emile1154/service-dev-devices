@@ -18,7 +18,6 @@ import java.nio.file.Path;
 /**
  * This class compare and convert files {@link org.springframework.web.multipart.MultipartFile}
  *                                      {@link java.io.File}
- *
  * @author EM1LJAN
  */
 @Component

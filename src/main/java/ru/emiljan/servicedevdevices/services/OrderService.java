@@ -152,6 +152,7 @@ public class OrderService {
      * set order status method
      * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
      * @param status {@link ru.emiljan.servicedevdevices.models.Status}
+     * @param request for build link
      */
     @Transactional
     public void update(CustomOrder order, Status status, HttpServletRequest request){
@@ -168,6 +169,7 @@ public class OrderService {
      * set order price method
      * @param order {@link ru.emiljan.servicedevdevices.models.order.CustomOrder}
      * @param price price value
+     * @param request for build link
      */
     @Transactional
     public void update(CustomOrder order, BigDecimal price, HttpServletRequest request) {
